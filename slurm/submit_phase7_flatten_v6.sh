@@ -21,7 +21,7 @@ module load Stages/2025 GCC/13.3.0 Python/3.12.3
 # way, but noisy/misleading in the logs, so just doing the module load
 # directly instead.)
 
-DATA="/e/data1/datasets/playground/mmlaion/shared/nguyen38/FineVideo-VLA"
+DATA="/e/data1/datasets/playground/mmlaion/shared/nguyen38/window8_legacy/FineVideo-VLA"
 
 mkdir -p logs "${DATA}/megatron_dataset_v6"
 

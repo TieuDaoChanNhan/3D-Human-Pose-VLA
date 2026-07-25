@@ -44,7 +44,7 @@ from phase3_kinematics_processor import create_windows  # noqa: E402
 
 import cv2  # noqa: E402
 
-RESAMPLED_DIR = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d_h36m_30fps"
+RESAMPLED_DIR = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d_h36m_30fps"
 OUT_DIR = os.path.join(REPO_ROOT, "samples", "harmony4d")
 FPS = 30
 WIDTH, HEIGHT = 640, 640

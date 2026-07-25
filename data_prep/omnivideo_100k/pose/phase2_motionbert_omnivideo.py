@@ -44,7 +44,7 @@ CONFIG = os.path.join(MOTIONBERT_ROOT, "configs/pose3d/MB_ft_h36m.yaml")
 CHECKPOINT = os.path.join(MOTIONBERT_ROOT, "checkpoint/pose3d/FT_MB_release_MB_ft_h36m/best_epoch.bin")
 INFER_SCRIPT = os.path.join(MOTIONBERT_ROOT, "infer_wild.py")
 
-DATA_ROOT = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/omnivideo_100k"
+DATA_ROOT = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/omnivideo_100k"
 DEFAULT_VIDEOS_DIR = os.path.join(DATA_ROOT, "videos")
 DEFAULT_VIDEO_IDS_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "sports_subset_video_ids_filtered.txt")
 DEFAULT_INPUT_2D_DIR = os.path.join(DATA_ROOT, "pose_2d_json")

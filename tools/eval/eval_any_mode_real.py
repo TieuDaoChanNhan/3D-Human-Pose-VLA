@@ -51,7 +51,7 @@ from eval_vla_v2_media import _patched_tokenizer_path, decode_media
 REPO_ROOT = os.path.join(os.path.dirname(__file__), "..", "..")
 
 SYNTH_LLAVA2_SHARD = "/p/data1/mmlaion/shared/vla/synth_llava_flat/synth_llava2_shard-0000025.jsonl"
-FINEVIDEO_V6_SHARD = ("/e/data1/datasets/playground/mmlaion/shared/nguyen38/"
+FINEVIDEO_V6_SHARD = ("/e/data1/datasets/playground/mmlaion/shared/nguyen38/window8_legacy/"
                       "FineVideo-VLA/megatron_dataset_v6/flat_final_vla_adaptive_rank_1.jsonl")
 ROLEPLAY_SHARD = "/p/data1/mmlaion/shared/vla/laion_emotional_roleplay/flattened/roleplay_snac_flat_00000.jsonl"
 

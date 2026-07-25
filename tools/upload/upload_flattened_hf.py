@@ -84,11 +84,11 @@ def main():
     )
     parser.add_argument(
         "--source-dir",
-        default="/e/data1/datasets/playground/mmlaion/shared/nguyen38/FineVideo-VLA/megatron_dataset_v6",
+        default="/e/data1/datasets/playground/mmlaion/shared/nguyen38/window8_legacy/FineVideo-VLA/megatron_dataset_v6",
     )
     parser.add_argument(
         "--upload-dir",
-        default="/e/data1/datasets/playground/mmlaion/shared/nguyen38/FineVideo-VLA/hf_upload_flattened_v6",
+        default="/e/data1/datasets/playground/mmlaion/shared/nguyen38/window8_legacy/FineVideo-VLA/hf_upload_flattened_v6",
     )
     parser.add_argument(
         "--shard-prefix",

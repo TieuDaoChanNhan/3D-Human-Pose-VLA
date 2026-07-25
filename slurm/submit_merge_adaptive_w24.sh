@@ -12,7 +12,7 @@
 
 source setup_motionbert.sh
 
-DATA="/e/data1/datasets/playground/mmlaion/shared/nguyen38/FineVideo-VLA"
+DATA="/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/FineVideo-VLA"
 AGENT_DIR="/e/data1/datasets/playground/mmlaion/shared/nguyen38/outputs/agent_tokens_adaptive_w24"
 SNAC_DIR="${DATA}/snac_tokens_w24"
 CAPTIONS_DIR="${DATA}/captions_dict"

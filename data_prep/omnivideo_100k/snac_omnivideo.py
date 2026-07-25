@@ -48,7 +48,7 @@ from pipeline_pose.snac_finevideo import (  # noqa: E402
 TARGET_FPS = 30
 CHUNK_SIZE = 24  # must match step_a/step_a_tokenize_video.py's CHUNK_SIZE
 
-DATA_ROOT     = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/omnivideo_100k"
+DATA_ROOT     = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/omnivideo_100k"
 CAPTIONS_FILE = os.path.join(DATA_ROOT, "omnivideo_100k_segment_captions.jsonl")
 VIDEO_DIR     = os.path.join(DATA_ROOT, "videos")
 OUTPUT_DIR    = os.path.join(DATA_ROOT, "snac_tokens_w24")

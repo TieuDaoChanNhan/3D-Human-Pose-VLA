@@ -32,7 +32,7 @@ for i in $(seq 1 $NUM_WORKERS); do
     SLURM_ARRAY_TASK_ID=$i \
     SLURM_ARRAY_TASK_COUNT=$NUM_WORKERS \
     python -u pipeline_pose/phase4_yolo_cleaner.py \
-        --videos-dir "/e/data1/datasets/playground/mmlaion/shared/nguyen38/videos_staging" \
+        --videos-dir "/e/data1/datasets/playground/mmlaion/shared/nguyen38/shared_window_independent/videos_staging" \
         --input-dir  "/e/data1/datasets/playground/mmlaion/shared/nguyen38/outputs/states_jsonl_w24" \
         --resampled-npy-dir "/e/data1/datasets/playground/mmlaion/shared/nguyen38/outputs/3d_npy_30fps" \
         --output-dir "/e/data1/datasets/playground/mmlaion/shared/nguyen38/outputs/yolo_cleaned_w24" \

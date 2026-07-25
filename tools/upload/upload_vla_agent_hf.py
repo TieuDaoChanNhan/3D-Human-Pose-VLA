@@ -67,11 +67,11 @@ def main():
     )
     parser.add_argument(
         "--source-dir",
-        default="/e/data1/datasets/playground/mmlaion/shared/nguyen38/FineVideo-VLA/final_dataset_adaptive",
+        default="/e/data1/datasets/playground/mmlaion/shared/nguyen38/window8_legacy/FineVideo-VLA/final_dataset_adaptive",
     )
     parser.add_argument(
         "--upload-dir",
-        default="/e/data1/datasets/playground/mmlaion/shared/nguyen38/FineVideo-VLA/hf_upload_adaptive",
+        default="/e/data1/datasets/playground/mmlaion/shared/nguyen38/window8_legacy/FineVideo-VLA/hf_upload_adaptive",
     )
     parser.add_argument(
         "--skip-compress", action="store_true",

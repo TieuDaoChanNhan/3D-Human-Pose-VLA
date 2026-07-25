@@ -285,7 +285,7 @@ python tools/decode/decode_seed2.py --tokens 6750,680,2472,... --output out.png
 """
 
 
-TOKENIZER_DIR = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/tokenizer_vla_qwen3"
+TOKENIZER_DIR = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window8_legacy/tokenizer_vla_qwen3"
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # 3d-human-pose/ (file is at tools/upload/<this>.py)
 DECODER_FILES = [
     "tools/decode/decode_cosmos.py",

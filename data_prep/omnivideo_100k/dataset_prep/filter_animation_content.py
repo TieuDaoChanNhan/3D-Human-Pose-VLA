@@ -29,7 +29,7 @@ Usage:
 import json
 import re
 
-CAPTIONS_JSONL = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/omnivideo_100k/omnivideo_100k_segment_captions.jsonl"
+CAPTIONS_JSONL = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/omnivideo_100k/omnivideo_100k_segment_captions.jsonl"
 INPUT_IDS = "data_prep/omnivideo_100k/sports_subset_video_ids.txt"
 OUTPUT_IDS = "data_prep/omnivideo_100k/sports_subset_video_ids_filtered.txt"
 

@@ -30,4 +30,4 @@ export FFMPEG_PATH=$(python -c "import imageio_ffmpeg; print(imageio_ffmpeg.get_
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 
 srun python -u /e/project1/reformo/nguyen38/3d-human-pose/data_prep/omnivideo_100k/step_a/step_a_tokenize_video.py \
-    --output-dir /e/data1/datasets/playground/mmlaion/shared/nguyen38/omnivideo_100k/step_a_output_w24
+    --output-dir /e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/omnivideo_100k/step_a_output_w24

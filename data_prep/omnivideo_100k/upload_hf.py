@@ -25,8 +25,8 @@ import shutil
 
 from huggingface_hub import HfApi, login
 
-SOURCE_DIR = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/omnivideo_100k/final_w24"
-UPLOAD_DIR = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/omnivideo_100k/final_w24_hf_upload"
+SOURCE_DIR = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/omnivideo_100k/final_w24"
+UPLOAD_DIR = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/omnivideo_100k/final_w24_hf_upload"
 SHARD_PREFIX = "step_a_rank"
 TOTAL_SHARDS = 32
 TEST_RATIO = 0.06  # ~2/32 shards held out

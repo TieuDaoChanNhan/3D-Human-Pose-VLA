@@ -22,7 +22,7 @@ from tools.visualize.render_filtered_skeleton import (  # noqa: E402
     compute_global_xy_projection, render_video,
 )
 
-DATA_ROOT = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/omnivideo_100k"
+DATA_ROOT = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/omnivideo_100k"
 CANVAS_W, CANVAS_H = 640, 480
 
 

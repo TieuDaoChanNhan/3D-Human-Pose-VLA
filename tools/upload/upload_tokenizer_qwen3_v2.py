@@ -36,7 +36,7 @@ import tempfile
 
 from huggingface_hub import HfApi
 
-TOKENIZER_DIR = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/tokenizer_vla_qwen3_v2"
+TOKENIZER_DIR = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/tokenizer_vla_qwen3_v2"
 REPO_ID = "EmpathicRobotics/tokenizer-vla-qwen3-v2"
 
 README = """\

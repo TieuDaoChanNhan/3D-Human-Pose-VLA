@@ -15,7 +15,7 @@ module load Stages/2025 GCC/13.3.0 Python/3.12.3
 # (text augmentation), only available via ~/.local under this module set,
 # not env_motion_final -- don't source setup_motionbert.sh here.
 
-DATA="/e/data1/datasets/playground/mmlaion/shared/nguyen38/FineVideo-VLA"
+DATA="/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/FineVideo-VLA"
 
 mkdir -p logs "${DATA}/megatron_dataset_adaptive_w24"
 

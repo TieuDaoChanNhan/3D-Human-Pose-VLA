@@ -64,8 +64,8 @@ extracted to disk.
 
 Usage:
     python3 data_prep/harmony4d/convert_coco_to_h36m.py \
-        --harmony4d-root /e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d \
-        --output-dir /e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d_h36m_native20fps
+        --harmony4d-root /e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d \
+        --output-dir /e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d_h36m_native20fps
 """
 import argparse
 import glob
@@ -192,9 +192,9 @@ def convert_sequence(zf, frame_members, conf_threshold):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--harmony4d-root",
-                    default="/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d")
+                    default="/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d")
     ap.add_argument("--output-dir",
-                    default="/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d_h36m_native20fps")
+                    default="/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d_h36m_native20fps")
     ap.add_argument("--conf-threshold", type=float, default=0.3)
     ap.add_argument("--splits", nargs="+", default=["train", "test"], choices=["train", "test"])
     args = ap.parse_args()

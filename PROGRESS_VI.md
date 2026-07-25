@@ -2780,3 +2780,379 @@ Viết `data_prep/harmony4d/upload_hf.py` (mirror cấu trúc roleplay's `upload
 User chia sẻ: dự án này thực chất giúp **châu Âu/JSC (Jülich) chạy đua công nghệ multimodal** — mảng này châu Âu/JSC làm rất ít, nên giá trị không nhất thiết phải là "thắng benchmark chất lượng ảnh/video" mà là **xây được năng lực pipeline any-to-any thật trên hạ tầng châu Âu** (JUPITER). Đã lưu đầy đủ khung suy nghĩ này + đánh giá dự án + checklist trước train v3 + đánh giá khả năng publish (ICLR/ICML: chưa đủ, thiếu eval protocol + ablation có kiểm soát, nhưng phát hiện "cosmos áp đảo token budget gây lặp token" có tiềm năng thành 1 workshop paper nếu làm thí nghiệm kiểm soát) vào memory `project_qwen3_v2_training_run.md` (đã update toàn bộ, không còn ghi "chưa submit" nữa — v2 đã train+eval xong từ lâu, chỉ là memory cũ chưa cập nhật).
 
 **Điểm quan trọng riêng, dễ quên**: "mức nào thì ổn" cho seed2/cosmos KHÔNG nên đo bằng độ đẹp khi decode ra ảnh/video — đó là kênh nhận thức/điều kiện hoá cho LLM, bar đúng là **model có dùng đúng thông tin đó khi sinh action/ngôn ngữ tiếp theo không** (đã có bằng chứng PASS: test cross-modal binding, 32 token seed2 → model tự sinh đúng caption). Cosmos đã có trần chất lượng thật (REPORT.md §37, tăng resolution chỉ gain "modest") — đừng đầu tư thêm vào hướng "cosmos đẹp hơn", đòn bẩy thật nằm ở tầng khác (dropout, seq_length, eval harness).
+
+---
+
+## Phase 6/7 FineVideo + OmniVideo-100K w24 hoàn tất, phát hiện + sửa bug listen/speak nghiêm trọng ở Phase 7, promote tokenizer v2, JUWELS Megatron-tokenize 6/6 dataset xong, đếm token thật (23/07/2026, tiếp)
+
+### Trạng thái cuối phiên trước (checklist đã resume đúng)
+`1022987` (Step A FineVideo w24) — COMPLETED sạch (sacct xác nhận, 160/160 rank, exit 0:0). Đã verify cấu trúc thật: cosmos 896 tok/chunk (aspect-preserving), seed2 32 tok/chunk, chunk ~0.75s (đúng window=24). `output_vla` move — verify byte-for-byte khớp tuyệt đối (project1: 371+108 file, khớp data1 100%, phần lệch chỉ là `vla_25b_test` có sẵn từ trước) → **đã xoá bản project1 (1.2TB) thật sự lần này**.
+
+### 1. OmniVideo-100K Phase 6+7 — XONG hoàn toàn
+Phase 6 merge (agent+listen wired lần đầu): 5,213/5,213, 0 malformed, 784 video có agent (23,213 window), **100% video có listen** (673,940 chunk). Phase 7 finalize (QA): 5,213/5,213 có QA (99,983 cặp), 1 video (`o883LVfQjHE`) có QA nhưng không có trong Step A — cảnh báo nhỏ, không phải bug. Output: `omnivideo_100k/final_w24/` (32 file, 5.0GB). Tạo sample mới `samples/omnivideo_100k_final_sample_w24/` (cùng video_id `01EA0-dw0-E` với sample window=8 cũ để so sánh trực tiếp). Cập nhật `upload_hf.py` (xoá cảnh báo STALE, số liệu thật). User đã tự upload lên `EmpathicRobotics/omnivideo-100k-final`.
+
+Dọn `outputs.tar`(2.6TB)/`videos_staging.tar`(631GB) trên data1 — user xác nhận xoá, đã xoá xong (3.2TB giải phóng).
+
+### 2. Huu yêu cầu mới (torso/arms/hands cho video occlusion + demo HF chạy được) — điều tra, CHƯA làm
+- **Filter hiện tại KHÔNG theo ý Huu**: `phase3_kinematics_processor.py` — pelvis=0 → toàn bộ frame (kể cả torso/arm hợp lệ) bị NaN. `phase5_adaptive_pchip.py:198` — 1 frame NaN trong window → bỏ CẢ window. Video "cận cảnh tay, không thấy hông" hiện bị loại 100%, ngược hẳn ý Huu (giữ torso+tay khi thiếu chân).
+- **Bàn tay**: pipeline hiện tại (HRNet-w48 COCO-17 qua `phase1_hrnet_gpu.py`) không có hand keypoints, MotionBERT vendor cũng hardcode 17-khớp H36M, không checkpoint wholebody. Cần model mới (RTMPose-wholebody/MediaPipe) — user bảo "để từ từ", chưa làm.
+- **Demo HF chạy được**: hiện chỉ có decoder (`decode_agent_tokens.py`, `decode_snac.py`...), KHÔNG có encoder single-item (ảnh/video thô → token) tái sử dụng được ngoài batch pipeline. Cần tách hàm `encode_one()` + Gradio app — chưa làm, cần quyết định ngân sách GPU Space trả phí trước.
+
+### 3. FineVideo Phase 6 merge (w24) — chạy xong, smoke test kỹ trước
+Verify input sẵn sàng: 160 rank Step A, `agent_tokens_adaptive_w24/` (17,820 file), `snac_tokens_w24/` (40,779 file). `pipeline_pose/phase6_merge_adaptive.py` đã có `--chunk-size` CLI (chưa commit từ trước, default vẫn 8, phải truyền `24` tường minh). Job `1027172` (32-array) — COMPLETED sạch, 160/160 file, spot-check có `<listen>`/`<caption>` đúng format.
+
+### 4. Bug nghiêm trọng bắt được ở Phase 7 flatten trước khi chạy full — silent data loss
+Smoke test đầu tiên (`--drop_cosmos 0.85`) ra `snac=0` dù input có 254 `<listen>` block thật. Root cause: `pipeline_pose/phase7_flatten.py` — `_RE_SNAC` chỉ nhận `<snac>` (quy ước cũ), không biết `<listen>`/`<speak>` (quy ước mới 23/07). Nghiêm trọng hơn: filter dòng 436 `if "<agent>" not in raw_tokens and "<snac>" not in raw_tokens: continue` — **loại bỏ nguyên activity chỉ có audio, không có agent**, vì check nhầm tag cũ. Hệ quả kép: activity chỉ-audio bị xoá sạch, activity có agent thì mất 100% audio kèm theo.
+
+**Đã sửa**: thêm `_RE_LISTEN`/`_RE_SPEAK`, xử lý trong state machine (giữ nguyên wrapper tag gốc khi output, không gộp chung `<snac>`), sửa filter dòng 436 thêm check `<listen>`/`<speak>`, `count_token_types` gộp listen/speak vào bucket `snac` cho thống kê. Verify lại: record nhảy 384→2,533 (activity chỉ-audio giờ được giữ), snac 0%→13.4%.
+
+Submit full (`slurm/submit_phase7_flatten_w24.sh`, `--drop_cosmos 0.85`, `--chunk-size` không cần vì Phase 7 không dùng) — job `1027674` COMPLETED sạch: **160/160 file, 368,229 record, 2.605B token (regex approx)** — seed2 12.5%, cosmos 61.3% (sau dropout, từ 92.5% trước dropout), agent 12.5%, snac 13.1%.
+
+### 5. Tokenizer promote — `tokenizer_vla_qwen3_v2`
+Verify trực tiếp bằng `tokenizers.Tokenizer.encode()` (không đoán): tokenizer production (`tokenizer_vla_qwen3`, 106,258 added token) **KHÔNG atomic** cho `<listen>`/`</listen>`/`<speak>`/`</speak>` (tách 3-4 mảnh BPE) — vì được build TRƯỚC quy ước listen/speak (chốt cùng ngày 23/07). Stream 50,000 record MV-Omni thật → 28,672 ID `<snac_N>` unique, **16,384 (57%) nằm ngoài 3 dải đã biết** (2 dải mới `136458-144649`, `148746-156937`) — cũng KHÔNG atomic ở tokenizer cũ.
+
+Tokenizer candidate (`tokenizer_vla_qwen3_v2_test`, build trước đó, 122,918 added token) fix đủ cả 2 gap (0/28,672 non-atomic, cả 4 wrapper tag atomic). **Đây không chỉ là vấn đề MV-Omni — toàn bộ SNAC của chính FineVideo/OmniVideo-100K/Roleplay cũng bị ảnh hưởng tương tự** (đều dùng `<listen>`/`<speak>`).
+
+Đã: đổi tên → `tokenizer_vla_qwen3_v2`, mirror sang `/p/data1/mmlaion/shared/vla/tokenizer_vla_qwen3_v2`, viết `tools/upload/upload_tokenizer_qwen3_v2.py` (dry-run PASS). User sẽ tự upload HF (`EmpathicRobotics/tokenizer-vla-qwen3-v2`).
+
+### 6. `qwen3_1.7b_vla_v3.yaml` — cập nhật seq_length, đánh dấu data_path stale
+`seq_length: 8192→16384` (chốt), `tokenizer_model`→v2, `vocab_size: 274688` (274,561 thật, pad 128). `data_path`/`train_iters` (mix cũ 32.01B, window=8, không có Harmony4D) đánh dấu rõ STALE, chưa điền số mới — chờ .idx thật.
+
+### 7. JUWELS Megatron-tokenize — 6 sbatch script, TẤT CẢ 6/6 DATASET ĐÃ TOKENIZE XONG
+Viết/sửa 6 script ở `/p/data1/mmlaion/nguyen38/mv-scale/` (`tokenize_finevideo_w24.sbatch`, `tokenize_omnivideo_100k_w24.sbatch`, `tokenize_harmony4d.sbatch` mới, `tokenize_roleplay_speak.sbatch`, `tokenize_synth_llava.sbatch`, `tokenize_mv_omni.sbatch`) — đều trỏ `tokenizer_vla_qwen3_v2`, output riêng `tokenized_output_v2/` (tránh lặp bug "--resume bỏ qua vì trùng prefix tokenizer cũ" — đã từng dính 1 lần, xem entry cũ). Data staged từ `/e/data1` sang `/p` (copy, không xoá bản gốc): omnivideo_100k_final_w24, harmony4d_flat, laion_emotional_roleplay_speak, finevideo_w24_flat (35GB, sau khi Phase 7 xong).
+
+**Lần submit đầu (5 job): FAIL âm thầm** — `sacct` báo "COMPLETED 0:0" trong 7-8 giây (không thể thật với job Megatron tokenize), **không có file log nào được tạo ra** (kể cả `--output` path). User tự debug (`diag_quota` job riêng) — **loại trừ được nguyên nhân quota** (write test PASS, inode 22% dùng, còn nhiều). Nguyên nhân gốc chưa xác định rõ (có thể transient JUWELS scheduler issue) nhưng **resubmit lần 2 chạy sạch hoàn toàn**.
+
+**Kết quả cuối — 6/6 dataset tokenize xong, verify kỹ (không chỉ tin 1 dòng log)**:
+- Mỗi job: có đủ completion message (log nội bộ script + echo cuối sbatch wrapper)
+- MV-Omni riêng: verify chéo document count (`1,593,301` khớp tuyệt đối số record đã đếm từ đầu phiên), không có traceback/error thật (chỉ 1 warning benign), temp dir cleanup sạch, 4 shard `.bin`/`.idx` đúng kích thước target 10GB/shard
+
+**Token thật (đọc trực tiếp Megatron `.idx` header, sum sequence_lengths — KHÔNG phải regex ước lượng nữa)**:
+
+| Dataset | Token thật | % |
+|---|---:|---:|
+| finevideo_w24 | 5,262,398,880 | 35.61% |
+| mv_omni | 8,434,266,212 | 57.08% |
+| omnivideo_100k_w24 | 748,808,519 | 5.07% |
+| roleplay_speak | 114,844,937 | 0.78% |
+| harmony4d | 113,077,760 | 0.77% |
+| synth_llava | 103,097,102 | 0.70% |
+| **TỔNG** | **14,776,493,410 (14.776B)** | |
+
+Token thật cao gần gấp đôi ước lượng regex ở hầu hết dataset (VD FineVideo 5.262B thật vs 2.605B regex) — đúng như user tự lưu ý ("tokenize luôn ra nhiều hơn đếm word-split"), vì caption/QA/speech text được BPE thật chia nhỏ hơn whitespace-split.
+
+### 8. Nghiên cứu ngoài — FLUX-mimic (đối thủ mới xuất hiện, công bố CÙNG NGÀY 23/07/2026)
+mimic robotics + Black Forest Labs, xây trên FLUX 3 (flow-matching, không phải discrete-token LLM như mình) — đã deploy thật với Audi (thao tác vật thể mềm). Ưu thế thật: chỉ cần ~30 phút data robot/task (giảm 60x so với ~30 giờ cách cũ) nhờ tận dụng video-pretrained backbone. Có cả paper riêng ("mimic-video: Video-Action Models... Beyond VLAs") gợi ý hướng nghiên cứu đang dịch chuyển ra khỏi discrete-token VLA.
+
+Đánh giá đưa cho user: khác tầng nguồn lực (frontier lab vs. team nhỏ) + khác kiến trúc (flow-matching liên tục vs. tokenize rời rạc vào 1 LLM vocab) + khác mục tiêu (industrial deployment cụ thể vs. xây năng lực omni-modal any-to-any trên hạ tầng châu Âu, theo đúng khung Huu). Điểm học được thật: hướng "pretrain nhiều trên video + finetune action nhẹ" hiệu quả dữ liệu hơn hẳn — đáng cân nhắc cho roadmap dài hạn, không phải lý do hoảng.
+
+### Trạng thái cuối phiên — checklist resume
+- [x] OmniVideo-100K Phase 6+7 (w24): XONG, đã upload HF.
+- [x] FineVideo Phase 6+7 (w24): XONG (job `1027172`, `1027674`), drop_cosmos=0.85 áp dụng thật lần đầu tiên.
+- [x] Bug listen/speak ở `phase7_flatten.py`: đã sửa + verify, đã commit.
+- [x] Tokenizer v2 (`tokenizer_vla_qwen3_v2`): đã promote local + `/p`, code upload HF sẵn sàng (`tools/upload/upload_tokenizer_qwen3_v2.py`) — **user CHƯA upload HF** (tự làm khi rảnh).
+- [x] 6 sbatch JUWELS tokenize: viết xong, **CẢ 6/6 ĐÃ CHẠY XONG THẬT**, verify kỹ. Output: `/p/data1/mmlaion/shared/vla/tokenized_output_v2/` (56GB tổng).
+- [x] Token thật 6 dataset: 14.776B tổng (bảng trên).
+- [x] Commit + push lên GitHub: xong (`731e089`, repo đã đổi tên `finevideo-vla`, redirect từ `3D-Human-Pose-VLA`).
+- [ ] **Chưa làm — việc tiếp theo**: xác định tỉ lệ trộn CHÍNH XÁC dựa trên 14.776B token thật (nguyên tắc đã bàn: nhóm action gồm finevideo+omnivideo+harmony4d nên chiếm ~65% dù raw share chỉ ~41.5%; harmony4d cần hệ số boost thêm ngoài tỷ lệ raw dù đã oversample 20x ở tầng data). Điền `data_path`/`train_iters` thật vào `qwen3_1.7b_vla_v3.yaml`.
+- [ ] Chưa quyết: có cần chạy smoke-test train (vài trăm iter, 1 node) trước khi launch full 64-node hay launch thẳng — nên làm smoke test trước, dựa theo lịch sử dự án hay có bug âm thầm lọt qua (dropout không áp dụng, tokenizer sai, listen/speak bị xoá) tới tận lúc kiểm tra kỹ mới phát hiện.
+- [ ] Torso/arms/hands (Huu) + demo HF: chưa bắt đầu, gác lại theo yêu cầu user.
+- [ ] Dọn `miniforge3/`/`env_stable_vla/` sang data1: vẫn đợi (không còn job pose/Step A nào chạy nữa nên có thể làm được, chưa làm).
+- [ ] Tổ chức lại data1 thành `omni-action/`+`alexandria/`: vẫn chưa thực hiện, đã hết lý do phải đợi job chạy (mọi job chính đã xong) — có thể làm phiên sau.
+
+---
+
+## v3 mix-ratio tính xong + smoke test + launch full 64-node training; quota project1 tái phát + fix hẳn (di chuyển miniforge3/env_stable_vla); Huu yêu cầu code chạy model + encoder — làm portable toàn bộ 4 encoder/4 decoder cho `vla-1.7b-qwen3-v2`, phát hiện + sửa nhiều bug thật khi test (23/07/2026, tiếp)
+
+### 1. Tính trọng số mix thật từ 14.776B token, điền vào `qwen3_1.7b_vla_v3.yaml`
+Nguyên tắc: nhóm action (finevideo_w24+omnivideo_100k_w24+harmony4d, raw chỉ 41.46%) đẩy lên **65%** tổng (thay vì 60% ở v2, thêm harmony4d + drop_cosmos làm finevideo "nhẹ" hơn tương đối). Trong nhóm action, harmony4d được **boost 4x** ngoài tỷ lệ raw (1.85%→7.01% sau chuẩn hoá) vì là pose ground-truth đa camera chất lượng cao nhất dù đã oversample 20x ở tầng data vẫn quá nhỏ. Nhóm non-action giữ nguyên tỷ lệ raw (MV-Omni áp đảo là đúng vai trò backbone ngôn ngữ). Weight cuối: finevideo 0.2699+0.2592, omnivideo 0.0753, harmony4d 0.0456, mv_omni 0.1086×3+0.0154, roleplay 0.0046, synth_llava 0.0042 — tổng đúng 1.0000.
+
+`train_iters=881` (seq_length=16384×gbs=1024=16.78M tok/iter, 1 epoch/14.776B). Lưu ý quan trọng: giảm mạnh so với v2 (7,632 iter) — không phải lỗi, do seq_length gấp 4x + tổng corpus tính lại nhỏ hơn theo cách đo mới.
+
+Copy `tokenized_output_v2/` từ `/p` (JUWELS) về `/e/data1/.../vla_v3_tokenized/` (container chỉ bind `/e`, đã note trong CLAUDE.md).
+
+### 2. Smoke test — bắt được OOM thật, sửa `micro_batch_size` 4→1
+Lần đầu smoke test (`1029114`) OOM ngay iteration 1 (94.69/95GB) — `seq_length=16384` gấp 4x v2 (4096) mà giữ nguyên `micro_batch_size=4` không đủ bộ nhớ. Sửa `micro_batch_size: 4→1` (cả `_test.yaml` và file thật `v3.yaml`) — GBS giữ nguyên qua gradient accumulation, không đổi chất lượng training, chỉ chậm hơn 1 chút. Resubmit (`1029203`) — chạy sạch 100/100 iteration, loss giảm 11.44→6.9, checkpoint save+convert HF OK.
+
+### 3. Quota project1 tái phát ngay lúc submit — dọn hẳn lần này (miniforge3/env_stable_vla → data1)
+Submit lần 2 (fix micro_batch) dính lại `Disk quota exceeded` khi tạo `monitor_state/` — `jutil` xác nhận `exa_project1` lại vượt soft limit (4,175,171/4,000,000, gần giống hệt số sáng nay). Dọn `__pycache__` (5,733 file) chỉ đủ margin rất mỏng, submit lại vẫn dính lỗi ngay bước sau. Quyết định dọn triệt để: di chuyển hẳn `3d-human-pose/miniforge3` (134,833 file) + `env_stable_vla` (54,410 file) sang `/e/data1`, symlink lại đúng vị trí cũ.
+
+**Rút kinh nghiệm ngay lúc làm**: bắt đầu chạy nền bằng `nohup` — user nhắc lại đúng bài học đã có tiền lệ trong chính project này (lần move `output_vla` trước cũng từng dùng nohup rồi phải huỷ làm lại bằng tmux vì không sống qua session) — dừng lại, chuyển hẳn sang **tmux** (session `move_miniforge_envstable`), verify file-count khớp tuyệt đối trước khi xoá bản gốc. `miniforge3` khớp ngay (134,833=134,833). `env_stable_vla` lệch đúng 1 file (`.pyc` cache tạm rác, vô hại) — xoá rồi verify lại khớp, hoàn tất cả 2. Giải phóng đủ inode, submit lại thành công.
+
+### 4. Full training v3 launch — job `1029227`, 64 node, chạy khoẻ
+Submit `qwen3_1.7b_vla_v3` thật. Verify tại nhiều mốc: 100/881 (loss 5.93) → 300/881 (4.70) → 500/881 (4.16) → 600/881 (3.97) — giảm đều, không NaN, không skip iteration, ~3.66s/iter (~55 phút cho cả 1 epoch). Đây là lần đầu tiên dự án thực sự train với `drop_cosmos` áp dụng thật + tokenizer v2 (listen/speak) + mix 6 nguồn.
+
+### 5. Huu yêu cầu code chạy model cho eval — phát hiện + sửa hàng loạt gap portable
+Huu (PI) nhắn trực tiếp: *"give us the code to run the model... people lined up to eval but they are stuck."* Điều tra: repo GitHub **đã public** (`TieuDaoChanNhan/finevideo-vla`, private:False) nhưng `prototype/` (chứa checkpoint cosmos + code seed2) **hoàn toàn nằm ngoài git** (0 file tracked) — đây là gap thật khiến người ngoài không chạy được.
+
+**Decoder (4/4, đã có sẵn code, cần làm portable):**
+- `decode_cosmos.py`: vendor `cosmos_tokenizer` (NVIDIA, Apache-2.0, 663KB source, giữ NOTICE.md attribution) vào `tools/decode/vendor/`; checkpoint tự tải từ `nvidia/Cosmos-Tokenizer-DV8x16x16` qua `hf_hub_download` nếu không có bản local. Verify thật qua đúng nhánh HF-download (ép code không thấy local) → mp4 thật.
+- `decode_seed2.py`: phát hiện quan trọng — checkpoint 2.6GB **đã public sẵn** ở `ontocord/seed2` (chính README vendor ghi rõ `git clone https://huggingface.co/ontocord/seed2`), không cần tự upload/lo license. Sửa để tự `snapshot_download` khi không có local. **Bắt được bug thật lúc test encoder** (xem mục 6) khiến phải sửa lại `_load_seed2_tokenizer()`'s chdir logic.
+- `decode_snac.py`, `decode_agent_tokens.py`: đã portable sẵn từ trước, không cần sửa code, chỉ verify.
+
+Cả 4 decoder verify **thật** bằng token thật của chính model v2 đã sinh ra (không phải data giả) — kết quả lưu `samples/vla_v2_decoder_test/`.
+
+**Bundle tokenizer + toàn bộ code vào chính model repo HF** (`EmpathicRobotics/vla-1.7b-qwen3-v2`) — không cần `git clone` riêng nữa, chỉ `snapshot_download` 1 lần. `AutoTokenizer.from_pretrained` giờ trỏ thẳng vào model repo.
+
+### 6. Bug thật bắt được khi user tự chạy `upload_vla_v2_model.py` — path cũ sau khi move `output_vla`
+User chạy thử, dính `FileNotFoundError` — `MODEL_DIR` hardcode `/e/project1/.../output_vla/...` nhưng thư mục này đã move sang `/e/data1` từ đầu phiên (đã verify byte-for-byte + xoá bản project1). Grep tìm thêm, phát hiện **3 file khác** cùng lỗi (`upload_vla_model.py`, `eval_vla_sanity.py`, `eval_vla_v2_sanity.py`) — sửa cả 4, verify path đích tồn tại thật trước khi commit.
+
+### 7. Huu yêu cầu thêm encoder (image/video/audio thô → token) — làm portable cả 4, test round-trip thật từng cái
+*"we will need code to encode too, otherwise we can't send it what we are saying"* — tạo `tools/encode/`:
+- `encode_seed2.py`: tái dùng `_load_seed2_tokenizer()` từ decode_seed2.py. **Bắt bug thật lúc test**: chdir sai 1 cấp cho nhánh local (đổi mất "parent of seed2_dir" thành "seed2_dir" khi sửa decode trước đó) làm vỡ lookup nội bộ `./seed2/bert-base-uncased` — chỉ lộ ra khi encode chạy full model init (decode không đụng path này). Sửa chdir theo nhánh (local→parent, download→chính nó). Round-trip test: 22/32 token khớp chính xác vị trí (baseline ngẫu nhiên ~1/8192).
+- `encode_cosmos.py`: khôi phục đúng convention CŨ (target_size=160, squash resize KHÔNG giữ tỉ lệ, Normalize 0.5/0.5) từ git history (trước commit `38d8e5f2` — commit đó mới đổi sang aspect-preserving/896-token, KHÔNG áp dụng ngược cho model v2 cũ). Test 2 lần: (a) round-trip qua video đã decode trước đó (7% khớp — thấp vì qua 2 lớp lossy: decode rồi encode lại video đã downsample), (b) **test sạch**: video gốc thật → encode → decode lại → gửi user so sánh trực tiếp bằng mắt.
+- `encode_snac.py`: tái dùng nguyên `encode_listen()` từ `pipeline_pose/snac_finevideo.py`, không đổi gì. Test round-trip trên audio thật 30s, gửi user nghe so sánh.
+- `encode_agent.py`: **ban đầu bỏ qua** (nghĩ "agent là thứ model sinh ra, không phải input") — **user phản biện đúng** ("agent cóc cần ko nhỉ"), nhận ra sai vì chính "agent completion" (đưa pose thật vào cho model hoàn thiện) đã là behavior verify PASS từ trước. Tái dùng `build_token_str()` từ `phase5_adaptive_pchip.py` (thuần numpy, sẵn portable). Test round-trip: decode 1 block `<agent>` thật của v2 → encode lại → khớp gốc trong sai số 1 bucket lượng tử (~1.57cm) — như kỳ vọng.
+
+Toàn bộ 4 encoder bundle vào model repo giống decoder.
+
+### 8. Nghiên cứu ngoài — FLUX-mimic (đã lưu ở entry trước, không lặp lại ở đây)
+
+### Trạng thái cuối phiên — checklist resume
+- [x] Mix ratio v3 tính xong, điền vào `qwen3_1.7b_vla_v3.yaml` — weight + train_iters đều dựa số thật.
+- [x] Smoke test PASS (100/100 iter) sau khi sửa `micro_batch_size=1`.
+- [x] Quota project1 dọn triệt để — `miniforge3`+`env_stable_vla` đã ở data1, symlink lại, không còn nguy cơ lặp lại (trừ khi tích luỹ file mới đủ nhiều lần nữa).
+- [x] **Full training `1029227` (64 node) — COMPLETED thật** (verify qua `sacct`: exit 0:0, chạy 01:00:48, kết thúc 2026-07-23T21:29:46 — không phải chỉ tin theo log "68%" ghi lúc trước, đã tự re-check bằng `sacct`+filesystem ở phiên sau). Checkpoint `iter_0000881` (= train_iters đích) đủ cả `torch/` lẫn `hf/` (đã tự động convert). Validation loss @881: **3.317 (PPL 27.58)**, test loss: 3.325 (PPL 27.79) — không NaN, không skip iteration.
+- [x] Cả 4 decoder + 4 encoder (`vla-1.7b-qwen3-v2`) đã portable hoàn toàn, verify thật từng cái, bundle vào model repo, push GitHub xong (nhiều commit, cuối cùng là `516bf55`).
+- [x] User đã tự upload model card cập nhật lên HF (lần đầu, trước khi phát hiện path bug) — **cần user chạy lại `upload_vla_v2_model.py` lần nữa** để đẩy bản có encoder + path đã sửa (đã nhắc, chưa xác nhận user đã chạy lại).
+- [ ] Chưa làm: torso/arms/hands (Huu, việc riêng), demo inference HF đầy đủ (khác với encoder rời rạc — Huu có thể coi encoder+decoder rời là đủ cho giờ, cần hỏi lại nếu chưa).
+- [ ] **Việc tiếp theo:** đánh giá model v3 (qualitative + so sánh v2), quyết định có publish `vla-1.7b-qwen3-v3` không — xem entry mới bên dưới.
+
+---
+
+## Đánh giá model v3 + phân tích feedback thật của Huu trên v2 (24/07/2026)
+
+### Job `1029227` — xác nhận COMPLETED (không chỉ tin log cũ)
+`sacct -j 1029227` → tất cả step `COMPLETED`, `ExitCode 0:0`, `Elapsed 01:00:48`, `End 2026-07-23T21:29:46`. Output tại `/e/data1/.../output_vla/qwen3_1.7b_vla_v3/`: checkpoint `torch/iter_0000881` + `hf/iter_0000881` (đã auto-convert, có `model.safetensors`). Log cuối xác nhận convert sạch cho cả `iter_0000500` (checkpoint giữa) và `iter_0000881` (checkpoint cuối). Validation loss @881: **3.317** (PPL 27.58), test: 3.325 (PPL 27.79).
+
+### Feedback thật từ Huu trên model v2 (Discord, đưa qua bởi user) — cần phân tích cho v3
+User dán 1 đoạn chat Discord dài giữa Huu, Divyansh, Jörg Franke về việc tự eval `vla-1.7b-qwen3-v2`. Điểm đáng chú ý:
+1. **Câu hỏi kỹ thuật về thứ tự token trong `<agent>` block**: Huu quan sát đúng — format hiện tại là **item-centric** (gom theo khớp: `<r_shoulder> <t_0><xyz> <t_1><xyz> ... </r_shoulder>`, rồi mới sang khớp khác), ví như đọc câu "vai di chuyển lên, rồi sang phải, rồi xuống — TIẾP THEO chân di chuyển lên...". Huu đề xuất thêm biến thể **time-centric** (gom theo mốc thời gian: `<t_0> <r_shoulder_xyz> <r_hip_xyz> ...`, rồi mới sang mốc thời gian khác) như một cách augment data.
+2. **Model tạo token nhất quán, văn bản mạch lạc, nhưng KHÔNG follow instruction** — Huu tự đánh giá "expected vì không có nhiều text/reasoning data".
+3. Ví dụ multilingual: hỏi "2^5 = ?" → model trả lời bằng tiếng Tây Ban Nha không liên quan (không tính toán được), yêu cầu "repeat what you heard" → sinh đúng `<speak>` block SNAC hợp lệ, nhưng khi hỏi "nghĩa tiếng Anh là gì" → bịa ra câu dịch không khớp nội dung gốc. **Kết luận đúng của Huu: model sinh token nhất quán + có tín hiệu multilingual, nhưng chưa thật sự "hiểu" nội dung cross-modal (không phải reasoning thật).**
+4. Huu hỏi trực tiếp: *"did you repeat the data or did you train only on one epoch of the 30BT?"* và *"did we add the stack exchange with images stuff?"* — 2 câu cần trả lời cho user.
+5. Huu Nguyen 3:45 AM: muốn có 1 interface để tự chạy model trên laptop — đây chính là lý do phiên trước phải làm portable encoder/decoder (đã xong).
+
+### Trả lời 2 câu hỏi trực tiếp của Huu (dựa trên số liệu thật đã có, không suy đoán)
+- **"repeat data hay chỉ 1 epoch của 30BT?"** — **ĐÍNH CHÍNH** (bản ghi trước đây trong entry này bị nhầm, gán nhầm chi tiết Harmony4D của v3 sang câu trả lời cho v2 — user phát hiện qua việc yêu cầu đọc lại chat, đã verify lại bằng chính file yaml thật `qwen3_1.7b_vla_v2.yaml` chứ không suy đoán từ trí nhớ). Sự thật: **v2 KHÔNG hề có Harmony4D trong mix** (Harmony4D chỉ được thêm vào 2 ngày sau, lần đầu ở v3 — v2 chỉ có đúng 5 nguồn: finevideo_v6, omnivideo_100k_video, synth_llava, roleplay, mv_omni). v2 train đúng **1 epoch trên 32.008B token thật** (`train_iters=7632`), không lặp lại toàn corpus — nhưng weight **KHÔNG size-proportional**, mà rebalance 60/40 có chủ đích (quyết định cùng user 21/07): nhóm có action token (finevideo_v6+omnivideo) được đẩy lên 60% tổng, 3 nguồn còn lại chia 40%. Quy đổi ra hệ số so với tỷ lệ tự nhiên:
+
+  | Nguồn | raw % | weighted % | hệ số |
+  |---|---:|---:|---:|
+  | finevideo_v6 | 34.14% | 57.17% | **1.675x** (oversample) |
+  | omnivideo_100k_video | 1.68% | 2.83% | **1.685x** (oversample) |
+  | synth_llava | 0.32% | 0.20% | 0.625x (undersample) |
+  | roleplay | 0.16% | 0.10% | 0.625x (undersample) |
+  | mv_omni | 63.71% | 39.71% | 0.623x (undersample) |
+
+  Nói chính xác cho Huu: không "repeat toàn bộ data", nhưng **finevideo_v6/omnivideo THẬT SỰ được oversample ~1.68x** so với tỷ lệ tự nhiên của chúng trong 1 epoch đó, đổi lại **mv_omni bị undersample xuống ~62.3%** — tức khoảng **37.7% dữ liệu MV-Omni chưa từng được model nhìn thấy** trong lần train v2 này (vì tổng token budget cố định = đúng bằng tổng corpus thật, nên phần trọng số bị cắt bớt của mv_omni đồng nghĩa 1 phần dữ liệu của nó bị bỏ qua hoàn toàn, không phải "thấy ít lần hơn"). Harmony4D oversample 20x (data-level) + boost 4x (weight-level) là chuyện **riêng của v3**, không áp dụng cho v2 — 2 việc khác nhau, đừng gộp lại.
+- **"stack exchange với ảnh đã add chưa?"** — **CHƯA**, xác nhận chắc bằng grep toàn repo: `stack_images3_gzip` (MixtureVitae-Backup, 12 archive StackExchange+ảnh) chỉ được **inventory/khảo sát** từ đầu tháng 7 (REPORT.md §13), cho ra vỏn vẹn **313K token seed2** — bị đánh giá "negligible", **chưa từng được tokenize/merge** vào bất kỳ mix training thật nào (6 nguồn tokenize thật của v2/v3 không có nó: finevideo, mv_omni, omnivideo, harmony4d, roleplay, synth_llava). Cần trả lời thẳng cho Huu: chưa add, và với chỉ 313K token thì gần như không đáng công merge riêng — nếu Huu vẫn muốn multilingual/StackExchange-text thật sự thì nên tìm nguồn lớn hơn nhiều lần con số này.
+
+### Viết + chạy `eval_vla_v3_sanity.py` thật (greedy) trên GPU login node, so sánh trực tiếp với log eval v2 cũ
+Viết `tools/eval/eval_vla_v3_sanity.py` (mirror `eval_vla_v2_sanity.py`), cập nhật đúng khác biệt thật của v3: tokenizer `tokenizer_vla_qwen3_v2`, window=24 (t_0-23 thay vì t_0-7), wrapper `<listen>/<speak>` thay vì bare `<snac>`, 2 dải SNAC mới. Prompt lấy từ **1 record thật** (`FineVideo-VLA/megatron_dataset_adaptive_w24/flat_final_vla_adaptive_rank_8.jsonl` dòng 576, video "Darth Maul lightsaber") thay vì bịa — có ground truth chính xác để so khớp. Chạy trực tiếp trên GPU GH200 tại login node hiện tại (không cần SLURM, model 1.7B fit thoải mái), env `env_stable_vla` (phải chạy trong `bash -lc` mới load module đúng — trong subshell thường bị lỗi `libpython3.12.so.1.0` y hệt bug JUWELS cũ, hoá ra cũng xảy ra trên Jupiter nếu module chưa load sạch trong đúng 1 shell). User chọn chỉ chạy greedy, không cần thêm sampled lần này.
+
+**Kết quả — Token atomicity: PASS (40/40)**, đúng như kỳ vọng (fix `<listen>/<speak>` + 2 dải SNAC mới hoạt động, khác hẳn tokenizer production cũ của v2 lúc đó FAIL 1/37 vì gap `<snac_140553>`, xem lịch sử `eval_vla_v2_sanity.py`).
+
+**Generation (greedy) — so trực tiếp với log cũ `samples/qwen3_1.7b_vla_v2_eval/eval_greedy_iter0007632.log`:**
+1. **Bug "greedy macro-repetition" (REPORT.md §32) VẪN CÒN NGUYÊN trong v3** — không được fix bởi mix mới/dropout mới/tokenizer mới. Cả 2 model, dưới greedy decoding, đều rơi vào vòng lặp lặp lại y nguyên 1 block token (v2: lặp `<cosmos>` 188-token; v3: lặp `<seed2>...<listen>` gần như byte-for-byte hàng chục lần). Đây là thuộc tính của **chiến lược decode** (greedy luôn chọn token xác suất cao nhất → hội tụ về 1 "điểm hút" lặp) chứ không hẳn lỗi do data/train — nhất quán với đánh giá REPORT.md đã ghi từ 22/07. **Kết luận: không nên đánh giá "có follow instruction không" bằng greedy — cần sampled (T>0) mới thấy hết modality transition thật**, đúng như log `eval_sample_T0.8` cũ của v2 đã cho thấy transition phong phú hơn hẳn (seed2→agent→cosmos→snac→seed2→caption→agent, agent decode ra chuyển động thật 0.038-0.047m thay vì đứng yên 0.000m).
+2. **Agent completion (window=24) — PASS, cấu trúc đúng.** Cho 3/17 khớp đầu thật (pelvis/r_hip/r_knee) của chính record huấn luyện, model tự hoàn thiện đúng 14 khớp còn lại, dùng đúng `t_0`/`t_23` (không lẫn t_7 kiểu cũ), đóng `</agent>` đúng chỗ, giá trị xyz nằm trong tầm hợp lý so với ground truth thật (không khớp tuyệt đối — model **tổng quát hoá tỉ lệ cơ thể** chứ không học thuộc lòng, hợp lý). Window 0 gần như đứng yên (0.000m) đúng NHƯ ground truth thật (cảnh "assumes a fighting stance" vốn tĩnh) — khác v2 test cũ ("raises arms above head" kỳ vọng chuyển động nhưng ra 0.000m, tức là lỗi thật ở v2) nên phép so sánh này không tương đương 1-1, cần thận trọng khi kết luận "v3 tốt hơn/kém hơn v2" chỉ từ điểm này.
+3. **REGRESSION thật tìm thấy: `image_caption_synth_llava` — v3 FAIL, v2 PASS.** Cùng 1 prompt thật (record `synth_llava2_003266024`, seed2-only) — v2 (log cũ) sinh đúng `<caption>` mạch lạc, đúng chủ đề ("portrait of young boy in green graduation cap and gown", khớp tinh thần ground truth dù chi tiết bịa khác). **v3 không sinh `<caption>` một lần nào** trong cả 300 token — thay vào đó rơi thẳng vào `<listen>` (nhầm modal hoàn toàn) rồi lặp vòng seed2↔listen. Giả thuyết nguyên nhân: tỷ trọng mix của `synth_llava` bị giảm mạnh ở v3 (**0.42%**, xem mục tính mix ratio) trong khi nhóm audio/SNAC (MV-Omni + roleplay) chiếm áp đảo — dưới greedy, "điểm hút" của phân phối nghiêng hẳn về modal có tỷ trọng cao nhất. **Cần verify lại bằng sampled trước khi kết luận đây là regression thật của model** (có thể chỉ là hiện tượng riêng của greedy).
+4. **`seed2_to_agent_from_scratch`** — cho đúng seed2 block thật của record training rồi để trống — ground truth thật (từ chính record) là mở `<agent>` tiếp theo, nhưng model lại mở `<listen>` trước (bỏ qua agent hoàn toàn ở bước đầu) — cùng loại vấn đề "modality transition" Huu đã nêu, vẫn còn tồn tại ở v3.
+
+### Kết luận sơ bộ đưa cho user (chờ xác nhận sampled trước khi chốt publish)
+- **KHÔNG có bằng chứng greedy cho thấy v3 "follow instruction" tốt hơn v2** — cùng 1 bug decode-loop y hệt. Nhận định của Huu trên v2 ("produce token nhất quán, text mạch lạc, nhưng không follow instruction — expected do thiếu text/reasoning data") **nhiều khả năng vẫn đúng nguyên cho v3**, vì v3 không thêm text/reasoning data mới, chỉ đổi mix ratio + dropout + wrapper token.
+- Cải thiện thật, xác nhận được: tokenizer atomicity (listen/speak + SNAC bands mới), agent block window=24 hoạt động đúng cấu trúc.
+- Cảnh báo thật cần điều tra thêm trước khi publish: khả năng **quên caption ảnh tĩnh (synth_llava)** dưới greedy — nếu sampled cũng cho kết quả tương tự thì đây là cái giá thật của việc hạ tỷ trọng synth_llava xuống 0.42% để nhường chỗ cho action-group 65%.
+- Câu hỏi "publish v3 hay không" **chưa nên chốt chỉ từ greedy** — việc tiếp theo card là chạy `--sample` (đã có sẵn flag trong script) để so 1-1 với `eval_sample_T0.8_iter0007632.log` của v2 trước khi quyết định.
+
+### Đính chính: mix ratio v3 KHÔNG chỉ "oversample Harmony4D" — finevideo/omnivideo cũng bị/được reweight
+User chỉ ra lỗi ở entry trên: câu hỏi gốc của Huu ("repeat data hay 1 epoch") là hỏi về **v2**, còn nhận định "chỉ oversample Harmony4D" là ý user nói riêng về **v3**. Verify lại bằng số liệu thật (bảng weight v3 đã tính, `qwen3_1.7b_vla_v2.yaml` cho v2):
+
+**v2 (không có Harmony4D — dataset này chưa tồn tại trong pipeline lúc đó):** mix **KHÔNG size-proportional** (bản ghi nhớ cũ nói vậy là SAI, đã sửa) — rebalance 60/40 có chủ đích: finevideo_v6 raw 34.14%→weighted 57.17% (**1.675x oversample thật**), omnivideo 1.68%→2.83% (**1.685x**), mv_omni 63.71%→39.71% (0.623x undersample, ~37.7% dữ liệu MV-Omni chưa từng thấy), synth_llava/roleplay cũng undersample ~0.625x.
+
+**v3 (có Harmony4D):** cùng kiểu rebalance nhưng nhóm action đẩy lên 65% (raw 41.46%):
+| Nguồn | raw % | weighted % | hệ số |
+|---|---:|---:|---:|
+| finevideo_w24 | 35.61% | 52.91% | **1.486x** oversample |
+| omnivideo_100k_w24 | 5.07% | 7.53% | **1.485x** oversample |
+| harmony4d | 0.77% | 4.56% | **5.922x** oversample (ở TẦNG MIX; cộng thêm 20x đã nhân sẵn ở tầng data khi flatten → tổng cộng **~118x** so với Harmony4D gốc chưa nhân bản) |
+| mv_omni | 57.08% | 34.12% | 0.598x undersample |
+| roleplay_speak | 0.78% | 0.46% | 0.590x undersample |
+| synth_llava | 0.70% | 0.42% | 0.600x undersample |
+
+**Kết luận chính xác:** cả v2 lẫn v3 đều KHÔNG "chỉ oversample 1 nguồn duy nhất" — finevideo/omnivideo LUÔN được oversample cùng cơ chế rebalance action/non-action (không riêng gì Harmony4D). Điểm khác biệt thật của Harmony4D so với finevideo/omnivideo: nó bị nhân lên ở **2 tầng** (data-level 20x + mix-level ~5.9x) trong khi finevideo/omnivideo chỉ có mix-level (~1.49x), nên hệ số tổng của Harmony4D vượt trội hẳn (~118x) — không phải vì nó là nguồn DUY NHẤT được oversample.
+
+### Full-chain generation với prompt hoàn toàn mới — decode thật ra ảnh/audio/pose
+User hỏi: đã thử feed prompt mới, bắt model gen ra video/ảnh/pose thật chưa? → Chưa, làm ngay. Viết `tools/eval/gen_full_chain_v3.py`: prompt hoàn toàn mới không có trong data ("Rooftop workout at sunset... man performs jumping jacks..."), generate bằng **sampling** (không dùng greedy — đã giải thích cho user lý do greedy không phản ánh đúng khả năng thật: chỉ tối ưu cục bộ từng bước, dễ tự khoá vào vòng lặp lặp lại, xem thảo luận trên), `min_new_tokens=1200` để ép model không dừng sớm ở EOS đầu tiên. Decode thật bằng `decode_seed2.py`/`decode_snac.py`/`decode_agent_tokens.py` (đã có sẵn từ trước), viết thêm hàm vẽ skeleton nhanh bằng matplotlib.
+
+**Kết quả (lưu tại `samples/qwen3_1.7b_vla_v3_eval/2026-07-24_full_chain_novel_prompt/`):**
+- Model tự sinh đủ chuỗi 6 block: `caption → seed2 → listen → cosmos (896 token) → agent → listen` — có chuyển modal thật (khác hẳn greedy).
+- **Caption bị hallucinate, lạc đề**: "The person is riding an ice rink to catch it from left." — hoàn toàn không liên quan tới prompt thật ("jumping jacks trên sân thượng lúc hoàng hôn"). Ảnh seed2 decode ra cũng là 1 cảnh hoạt hình/game bất kỳ, không khớp cả caption bịa lẫn prompt gốc. **Đây là bằng chứng trực tiếp, cụ thể cho đúng nhận định Huu đã nêu ("not follow instructions")** — model sinh token nhất quán về mặt cấu trúc nhưng không thực sự điều kiện hoá đúng theo ngữ cảnh mới lạ.
+- **Agent pose: PASS về mặt chuyển động thật** — pose skeleton frame 0 vs frame 23 khác nhau rõ (l_ankle/thorax/r_ankle di chuyển ~0.20m), decode ra hình người có khớp nối hợp lý, không đứng yên như 1 số test trước.
+- **Cosmos**: sinh đúng 896 token/chunk (khớp format w24/aspect-preserving thật đang dùng để train) nhưng **không decode được** — `decode_cosmos.py` còn hardcode format CŨ (200 token/chunk, window=8, vuông 160x160) từ hồi làm portable cho model v2. **Đây là gap công cụ có thật, chưa ai sửa** — cần viết lại decoder cho định dạng 896-token/aspect-preserving nếu muốn demo video thật từ model v3.
+- Audio (listen) decode ra `.wav` bình thường, không lỗi.
+- **Sự cố nhỏ trong lúc làm**: `generated_full_text.txt` bị ghi thiếu (688 byte thay vì ~21.5KB) ở 2 lần chạy đầu dù log script báo đúng 6 block — hoá ra là cache filesystem (GPFS) khi ghi đè cùng 1 file 2 lần liên tiếp trong thời gian ngắn; xoá file cũ trước khi chạy lại thì ra đúng. Không phải bug logic, nhưng cần nhớ: **xoá file output cũ trước khi rerun cùng path** thay vì tin tưởng ghi đè trực tiếp trên `/e/data1`.
+
+**Việc tồn đọng:** viết lại `decode_cosmos.py` hỗ trợ format 896-token/w24 (hoặc thêm nhánh tự phát hiện chunk size) nếu cần demo cosmos→video thật cho v3.
+
+### So sánh loss v2 vs v3 ở CÙNG số bước — bằng chứng thật cho cảm giác "v3 yếu hơn"
+User nhận xét "cảm giác v3 yếu hơn hẳn" sau khi xem kết quả — verify bằng số liệu thật thay vì chỉ trấn an: đọc trực tiếp `slurm-1009758.log` (v2) và `current.log` (v3) tại đúng iteration 850 của cả 2 (v2 dùng shard log thật vì symlink `current.log` trỏ vào path `/e/project1` đã bị xoá):
+
+| Iteration | v2 train loss | v3 train loss |
+|---|---:|---:|
+| 850 | **2.245** | **3.413** |
+| Cuối (7632 vs 881) | 1.694 (val PPL 5.77) | 3.413 (val loss 3.317, PPL 27.58) |
+
+**Ở CÙNG 850 bước optimizer, v3 tệ hơn v2 rõ rệt (3.41 vs 2.24)** — không chỉ vì train ít bước hơn (881 vs 7632, ~8.7x), mà per-step v3 thật sự khó hơn. Loss v3 vẫn đang giảm dốc lúc dừng (3.58→3.48→3.41 ở iter 750→800→850), chưa hề plateau — **undertrained thật, không phải đã hội tụ ở mức thấp hơn**.
+
+**Giả thuyết nguyên nhân (chưa test riêng từng cái, cần ablation nếu muốn xác nhận):**
+1. Số bước optimizer ít hơn ~8.7x (881 vs 7632) — do `train_iters` bị chốt cứng = "1 epoch" của corpus nhỏ hơn (14.776B) chia cho token/iter đã tăng 4x (seq_length 16384).
+2. `reset_position_ids`/`reset_attention_mask` (document-boundary packing) **vẫn chưa bao giờ được bật** ở cả 2 lần train (gap tồn đọng từ lâu) — seq_length tăng 4x mà không cắt boundary giữa các document nghĩa là mỗi sequence giờ nhồi ~4x nhiều đoạn văn bản không liên quan hơn, tăng nhiễu học so với v2.
+3. Nhiều thay đổi phân phối cùng lúc lần đầu áp dụng thật ở v3 (drop_cosmos=0.85, wrapper listen/speak mới, Harmony4D oversample, window=24) — khó fit trong ít bước hơn.
+
+### Test độc lập từng modal (không mồi bằng modal khác) — phát hiện quan trọng: ảnh/video KHÔNG tự chuyển mode, pose/audio thì có
+User yêu cầu: feed prompt bắt model gen độc lập ảnh/video/pose/audio (không phải để tự chạy cả chuỗi). Viết `tools/eval/gen_independent_modalities_v3.py`: mỗi test chỉ mồi bằng `### Context: ...` + đúng 1 tag mở (`<seed2>`, `<cosmos>`, `<agent> <fps_30>`, `<listen>`), không có gì khác dẫn dắt trước.
+
+**Kết quả (lưu `samples/qwen3_1.7b_vla_v3_eval/2026-07-24_independent_modalities/`):**
+- **`<seed2>` và `<cosmos>` — KHÔNG chuyển mode**: model bỏ qua hoàn toàn ý định sinh token ảnh/video, quay lại sinh **text tự nhiên bịa chuyện** hoàn toàn không liên quan (vd sau `<cosmos>` sinh ra mô tả "tựa game, logo Mpectos..." — rõ ràng lộ ra tri thức pretrain gốc của Qwen3 base, không phải hành vi VLA đã học). Cho thấy: model chỉ học được cách chuyển sang seed2/cosmos khi đi đúng theo mẫu ngữ cảnh cụ thể đã thấy lúc train (thường ngay sau `<caption>`), KHÔNG tổng quát hoá được sang "mở tag này ở bất kỳ đâu là phải sinh token này".
+- **`<agent>`/`<listen>` — CÓ chuyển mode đúng**: cả 2 đều lập tức sinh đúng token thật (joint tokens hợp lệ / snac tokens hợp lệ) ngay từ ngữ cảnh text tự do, không cần mồi seed2/cosmos trước. Agent pose sinh đúng cấu trúc 17 khớp, t_0/t_23 hợp lệ — nhưng **bắt được 1 lỗi định dạng thật của model**: khớp `l_shoulder` bị thiếu đúng 1 token `_x_` (2 t-token nhưng chỉ 1 x-token) — model thỉnh thoảng làm hỏng cấu trúc cứng nhắc "4 token/mốc thời gian" dưới sampling, không phải bug script.
+- **Ý nghĩa quan trọng cho v4**: pose/audio "chuyển mode" tổng quát tốt hơn hẳn ảnh/video — nghi ngờ hợp lý: cấu trúc token pose/audio đơn giản/đều đặn hơn (ít biến thể ngữ cảnh mào đầu), trong khi seed2/cosmos luôn xuất hiện theo đúng 1 khuôn cố định trong data → cần **đa dạng hoá ngữ cảnh dẫn vào seed2/cosmos** (đúng ý Huu đã đề xuất "intermix formats/wording... more OOD behaviour", xem memory `project_qwen3_v2_training_run.md`) nếu muốn model tự quyết định "giờ nên sinh ảnh" từ text tự do thay vì chỉ theo đúng 1 mẫu.
+
+### Sửa `decode_cosmos.py` hỗ trợ format w24/896-token — test thật thành công
+Đọc lại lịch sử git (`38d8e5f2`, `7437967`) để lấy đúng grid: format mới = aspect-preserving, shorter side 256px, không crop vuông → với video 16:9 ra (H,W)=(256,448) → grid (T',H',W')=(2,16,28)=896 token (khác grid cũ (2,10,10)=200 của v2). Sửa `CHUNK_GRID`→ tự nhận diện theo số token (200 hoặc 896), sửa luôn phần scale ffmpeg (trước hardcode "320:320" sẽ làm méo hình nếu áp cho grid không vuông). Test thật bằng đúng 896 token cosmos model v3 đã sinh ra ở test full-chain trước đó — **decode thành công**, ra file `cosmos_decoded.mp4` (không đánh giá chất lượng nội dung ở đây, chỉ xác nhận pipeline decode hoạt động đúng kỹ thuật).
+
+### Đính chính con số Harmony4D oversample (lỗi tính nhầm ở lượt trước) + soạn xong config v4
+Lượt trước tính tay ra "~118x/~354x tổng exposure" — **SAI**, verify lại bằng script tính chính xác: boost thật của v3 ở tầng mix là đúng **4x** (không phải 5.92x như suy ra gián tiếp trước đó) → tổng exposure Harmony4D ở v3 (1 epoch, 20x data-level × 4x mix-level) = **80x**, không phải 118x. Nếu giữ nguyên weight mà tăng lên 3 epoch ở v4 → sẽ thành **240x** (không phải 354x).
+
+**Đã soạn xong `oellm-autoexp/config/experiments/nguyen38/qwen3_1.7b_vla_v4.yaml`** (chưa submit), quyết định cuối cùng:
+- `train_iters: 881→2642` (~3 epoch của đúng corpus 14.776B, không cần data mới) — tổng token xử lý (44.3B) vẫn nhiều hơn cả v2 (32B) dù ít bước hơn (2642 vs 7632, do seq_length dài gấp 4x).
+- Bật `reset_position_ids`/`reset_attention_mask`/`eod_mask_loss` (data đã có `--append-eod` sẵn từ lúc tokenize, chỉ cần bật cờ Megatron, không cần tokenize lại) — nhắm đúng giả thuyết per-step loss v3 tệ hơn ở cùng số bước.
+- **Giảm boost Harmony4D từ 4x xuống 1.33x** (weight mới: finevideo 0.2831+0.2719, omnivideo 0.0790, harmony4d 0.0160 — verify tổng đúng 1.0000) để tổng exposure qua 3 epoch giữ nguyên ~80x giống v3 (20×1.33×3≈79.8x), thay vì để nó tự động tăng lên 240x chỉ vì tăng epoch cho các nguồn khác. Non-action group (mv_omni/roleplay/synth_llava) giữ nguyên.
+
+**Còn treo, user xác nhận để sau khi có v4**: test tính liên tục theo thời gian thật (nhiều `<agent>`/`<cosmos>` chunk liên tiếp có tiến triển hay chỉ lặp) — chưa làm ở v3, để dành test trên v4 sau khi train xong, vì 2 fix hiện tại (train_iters + document packing) không trực tiếp nhắm vào việc này, cần đánh giá riêng.
+
+**Chưa submit job — cần user gật đầu rõ ràng trước khi launch (64 node, tốn thật).**
+
+### User gật đầu — đã SUBMIT job v4 thật, đang chạy
+User xác nhận "submit đi". Dùng đúng template chuẩn (`feedback_training_submit_template.md`), có sửa 1 chỗ quan trọng: `OUTPUT_DIR` trong template gốc trỏ `/e/project1/.../output_vla` (đường dẫn cũ, đã xoá từ vụ quota project1 hôm trước) — đổi đúng sang `/e/data1/datasets/playground/mmlaion/shared/nguyen38/output_vla` (khớp nơi v2/v3 đang thật sự nằm, đã verify bằng `ls` trước khi chạy). Chạy trong tmux (session `v4_train`, đúng lesson đã rút ra — không dùng nohup), log ra `/e/data1/.../nguyen38/logs/v4_train_submit.log` (đúng lesson log phải nằm trên data1, không phải /tmp scratch).
+
+- **Job `1032135`** (`qwen3_1.7b_vla_v4_0`), 64 node, submit + chuyển RUNNING trong ~1 phút (không PENDING lâu).
+- Log training thật: `/e/data1/datasets/playground/mmlaion/shared/nguyen38/output_vla/qwen3_1.7b_vla_v4/current.log`
+- Tốc độ thật đo được: ~3.63-3.65s/iteration (ổn định từ iter 100 trở đi; iter 50 có nhiễu warmup 3.86s) — chỉ nhỉnh hơn v3 (3.658s) chút ít dù có thêm overhead `reset_position_ids`/`attention_mask`, không đáng kể.
+- **Ước tính thời gian train**: 2642 iter × ~3.64s ≈ 160 phút thuần + overhead checkpoint/convert → tổng **~3.0-3.3 giờ**. Job bắt đầu chạy 06:03 24/07 → dự kiến xong khoảng **09:10-09:20**.
+- Loss ban đầu đúng nhịp, giảm bình thường: iter50=8.20, iter100=6.48, iter150=5.95 (so với v3 cùng mốc: 8.37, 5.93, 5.51 — v4 khởi động chậm hơn chút do LR warmup dài hơn tỉ lệ, bình thường).
+- Đã set 1 Monitor nền (persistent) tail log, báo mỗi ~250 iteration + mọi lỗi/checkpoint/hoàn tất — không cần tự poll thủ công.
+
+**Thảo luận thêm cùng user**: user lo lắng "nếu v4 vẫn không bằng v2 thì mấy ngày qua để làm gì" — đã trao đổi thẳng: (1) v4 rất có khả năng vượt v3 (tin cậy cao), nhưng vượt v2 thì KHÔNG chắc — vì v4 vẫn có ít bước optimizer hơn v2 (2642 vs 7632) dù xử lý nhiều token/bước hơn, fix document-packing mới là giả thuyết dẫn đầu chứa không phải đã chứng minh; (2) rõ ràng 2 gap sẽ KHÔNG được sửa bởi v4 dù chạy tốt: "not follow instruction" (do thiếu text/reasoning data — Huu tự chỉ ra, v4 không thêm data mới) và seed2/cosmos không tự chuyển mode (do cần đa dạng hoá ngữ cảnh trong data, v4 giữ nguyên data); (3) nếu v4 vẫn không bằng v2, đó vẫn là kết quả có giá trị (loại được 2 giả thuyết cụ thể cho vòng sau), không phải công cốc — đúng bản chất nghiên cứu thật sự, không phải lỗi cách làm.
+
+**Việc tiếp theo khi v4 xong**: verify checkpoint + loss cuối, so trực tiếp với v2 (1.694/PPL 5.77) và v3 (3.317/PPL 27.58), chạy lại `eval_vla_v3_sanity.py`-tương-đương cho v4, và làm test tính liên tục theo thời gian (nhiều chunk `<agent>`/`<cosmos>` liên tiếp) đã hoãn từ trước.
+
+### Ablation song song: tách riêng biến "document-packing" khỏi v4
+User chủ động gợi ý: "submit thêm nhiều training được mà" — compute không phải điểm nghẽn. Nhận ra v4 đổi 3 thứ cùng lúc (train_iters×3, doc-packing, Harmony4D reweight) nên nếu v4 tốt hơn v3 sẽ **không biết chính xác do cái nào** — soạn thêm 1 ablation rẻ để tách bạch.
+
+**`oellm-autoexp/config/experiments/nguyen38/qwen3_1.7b_vla_v3_docpacked.yaml`**: y hệt v3 gốc 100% (881 iter, 1 epoch, Harmony4D boost 4x gốc, mọi weight/schedule giữ nguyên) — **chỉ đổi đúng 1 biến**: bật `reset_position_ids`/`reset_attention_mask`/`eod_mask_loss`. Mục đích: so loss ở đúng iteration 850 với v3 gốc (2.245 v2 / 3.413 v3) — nếu doc-packing một mình kéo được loss gần về vùng v2, xác nhận đúng giả thuyết chính; nếu không nhúc nhích, phần cải thiện của v4 (nếu có) là do tăng số bước chứ không phải packing.
+
+**Đã submit song song** (không tốn thêm thời gian chờ, SLURM tự cấp node riêng):
+- Job **`1032174`** (`qwen3_1.7b_vla_v3_docpacked_0`), 64 node, time limit 2h (rẻ hơn v4 vì chỉ 881 iter ≈ 1 tiếng).
+- Log: `/e/data1/datasets/playground/mmlaion/shared/nguyen38/output_vla/qwen3_1.7b_vla_v3_docpacked/current.log`
+- Submit qua tmux session `v3_docpacked_train`, log submit tại `.../logs/v3_docpacked_submit.log` — cùng convention với v4.
+- Có Monitor nền riêng theo dõi (báo mỗi ~100 iteration vì tổng chỉ 881).
+
+**Trạng thái tại thời điểm ghi entry**: `1032135` (v4) RUNNING iter 250/2642 loss 5.07; `1032174` (ablation) vừa submit, PENDING chờ đủ 64 node trống.
+
+## Cập nhật phiên làm việc — 24/07/2026 (tiếp lần 2 — v4 + ablation COMPLETED, kết quả thật, eval sanity v3 vs v4, đọc lại Phase 3→7 để trả lời Huu, chẩn đoán nguyên nhân v3/v4 yếu hơn v2, khởi động v5 reflatten, điều tra license DROID/Ego-Exo4D)
+
+**1. Job `1032135` (v4) và `1032174` (ablation docpacked) — CẢ HAI COMPLETED, kết quả thật (verify qua `sacct` + log training, không chỉ tin lời "done"):**
+
+| Run | iter | val loss | val PPL | test PPL |
+|---|---|---|---|---|
+| v2 (mốc) | 7632 | 1.7526 | 5.77 | 5.88 |
+| v3 (mốc) | 881 | 3.317 | 27.58 | 27.79 |
+| v3_docpacked (ablation) | 881 | 3.3735 | **29.18** | 29.38 |
+| v4 (3 thay đổi gộp) | 2642 | 2.7586 | **15.78** | 15.45 |
+
+**Ablation kết luận: giả thuyết "document-boundary packing" bị BÁC BỎ** — bật packing một mình (giữ mọi thứ khác y hệt v3) làm loss tệ hơn chút (29.18 vs 27.58), không kéo về gần v2 như kỳ vọng ở FIX #2 trong entry trước. Vậy cải thiện của v4 (PPL 27.58→15.78) chủ yếu đến từ **train nhiều bước hơn** (2642 vs 881 = ~3 epoch vs 1 epoch dở dang), không phải packing. Đã cập nhật memory `project_v4_planning_recommendations.md` với kết quả + khuyến nghị v5 (không thử lại packing).
+
+**2. Eval sanity v3 vs v4 song song (5 prompt thật, greedy, `eval_vla_v3_sanity.py`)** — chạy tmux, log tại `logs/eval_v3_sanity_*.log` / `logs/eval_v4_sanity_*.log`:
+- Cả hai: token atomicity PASS, hoàn thành đúng 17 khớp khi được mồi `<agent>`, vẫn KHÔNG tự mở `<agent>` từ seed2, vẫn còn bug lặp token theo khối khi greedy decode.
+- v4 báo "NEEDS REVIEW" nhưng xác minh là **false positive của chính script eval**: v4 tự chuyển `<listen>`→`<speech>` (hành vi hợp lý), nhưng `classify_token()` trong script không có rule cho `<speech>`, rơi vào fallback regex bị gắn nhầm nhãn "agent" → báo lỗi "No <fps_N> token found" sai.
+- **Kết luận: v3/v4 hành xử gần như giống hệt nhau ở test greedy 5-prompt này** — chênh lệch PPL lớn không "nhìn thấy" được qua bộ test này. Cần test nặng hơn: sampled decoding (không phải greedy) + temporal-continuity test (nhiều chunk liên tiếp) — CHƯA LÀM.
+
+**3. Đọc lại code thật Phase 3→7 để trả lời câu hỏi Huu ("did you drop videos where you couldn't find pose info?")** — verify từng dòng, không suy đoán:
+- Phase 3 (`create_windows()` dòng 339-354): chỉ drop window nếu **pelvis** NaN; khớp khác NaN được forward-fill nếu có ít nhất 1 frame hợp lệ trong window.
+- Phase 4 (YOLO): drop dựa trên có người trong khung RGB hay không, không liên quan NaN khớp.
+- **Phase 5 (`phase5_adaptive_pchip.py` dòng 198: `if np.isnan(states).any(): continue`) — đây là chỗ mất pose thật**: drop toàn bộ window nếu BẤT KỲ 1/17 khớp NaN suốt cả window (thường là khớp tay, do MotionBERT không thấy được trong video đơn mắt ngoài đời thực). Video mà mọi window đều dính → 0 output Phase 5.
+- Số liệu thật (cộng dồn log merge_w24, 32 worker): **22,984/40,804 video (56.3%) không có file agent-tokens nào.**
+- Phase 6: không skip video thiếu agent file, chỉ không inject gì. Phase 7 (dòng 472-474): giữ activity nếu có `<agent>` HOẶC audio (`<listen>/<speak>/<snac>`) — vì audio phủ ~100% FineVideo, video thiếu pose vẫn nằm trong training set cuối, chỉ là 0 đóng góp pose.
+- Đã trả lời user câu trả lời soạn sẵn cho Huu dựa trên phát hiện này (chưa gửi thật, chỉ soạn nội dung).
+- **Đồng thời đọc đoạn Discord thật giữa Huu/Van Khue (Huu paste vào chat)**: Van Khue tự xác nhận đúng cơ chế trên ("in some frames poses are bad... I filter those frame out, no agent tokens from them"), xác nhận "currently I'm doing 24 frames apart only" (không có variable frame sampling), xác nhận vẫn giữ seed2/cosmos cho video thiếu pose — Huu OK ("good, i was afraid our dataset was all human centric").
+
+**4. Chẩn đoán: vì sao v3/v4 "cảm giác yếu hơn" v2 — số liệu xác nhận, KHÔNG phải do thiếu token thô:**
+- Verify từ config thật (`qwen3_1.7b_vla_v2.yaml`): v2 = 7632×1024×4096 = **32.02B token, đúng 1 epoch, không lặp**. v3 = 881×1024×16384 ≈ 14.78B (1 epoch). v4 = 2642×1024×16384 ≈ **44.3B token đã xử lý** (3 epoch lặp lại trên corpus 14.78B).
+- **Điểm mấu chốt: v4 xử lý NHIỀU token hơn v2 (44.3B > 32B) mà vẫn tệ hơn nhiều (PPL 15.78 vs 5.77)** → không phải vấn đề "chưa đủ token thấy qua", mà là chất lượng/đa dạng corpus + cách format đổi.
+- 2 ứng viên nguyên nhân chính (chưa tách bạch bằng ablation thật):
+  1. **Lặp corpus nhỏ hơn 3 lần** (14.78B thay vì 32B unique) — đúng điều Huu từng hỏi/khen "1 epoch, no repeat" ở v2 (đoạn chat Huu paste: "did you repeat the data... this is good" khi Van Khue xác nhận không lặp).
+  2. **drop_cosmos=0.85 lần đầu thực sự áp dụng** — trong khi v2 theo memory **không hề áp dụng modality dropout nào** (bug/thiếu sót, không phải chủ đích) nên vô tình giữ 100% cosmos. Tính ra mật độ cosmos-token/giây video mà v3/v4 thấy thấp hơn v2 khoảng ~4-5 lần (200 tok×100% keep vs 896 tok×15% keep).
+  3. Biến thứ 3 (đổi 5→6 nguồn mix + Harmony4D oversample 80x) vẫn chưa tách được ảnh hưởng riêng.
+- **Đã bàn với user, quyết định launch 1 ablation cô lập giả thuyết #2**: giữ nguyên v4 config, chỉ đổi `drop_cosmos` 0.85→0.5.
+
+**5. Bắt đầu v5 (drop_cosmos ablation) — ĐANG CHẠY DỞ, chưa xong tại thời điểm ghi entry:**
+- **Bước 1 (đang chạy)**: re-run `pipeline_pose/phase7_flatten.py --drop_cosmos 0.5` trên `final_dataset_adaptive_w24/` → output mới `FineVideo-VLA/megatron_dataset_adaptive_w24_dropcosmos50/`. **Lần đầu chạy nhầm trực tiếp qua tmux trên login node (jpbl-s01-03) — user nhắc "đừng dại chạy trên login node", đã kill và chuyển sang sbatch đúng chuẩn** (`slurm/submit_phase7_flatten_w24_dropcosmos50.sh`, job **`1033979`**, booster/32cpu/4h, dùng `--skip-existing` để tận dụng các file đã xử lý xong ở lần chạy tmux trước khi bị kill). Log: `logs/phase7_w24_dc50_1033979.{out,err}`. **CHƯA XONG khi hết token phiên này — check `sacct -j 1033979` hoặc log file ở phiên sau.**
+- **Bước 2 (BLOCKER — chưa làm được)**: tokenize Megatron thật (JSONL → `.bin/.idx`) phải chạy trên **JUWELS** (`mv-scale/tokenize_vla_adaptive.sbatch`, account `laionize`) — **session JUPITER hiện tại KHÔNG SSH được vào JUWELS** (đã thử `ssh juwels-cluster`, không resolve host, không có config sẵn). Cần user tự chạy hộ bước này trên JUWELS khi bước 1 xong, hoặc cho biết cách khác để reach JUWELS.
+- **Bước 3**: train v5 trên JUPITER/booster — làm được bình thường, chờ bước 2.
+- **Chỉ áp dụng cho FineVideo trước** (35.61% của mix) — omnivideo_100k_w24 (5.07%, cũng có cosmos) chưa reflatten, có thể cần làm tương tự nếu muốn đồng bộ toàn mix, chưa quyết.
+
+**6. Data mới — điều tra dataset Huu gửi (DL3DV, ego4d-video, Ego-Exo4D-Relation-Train, EgoPoseVR, EgoHumanoid, EgoInfinity, DROID):**
+- **Xếp hạng ưu tiên đã chốt**: (1) Ego-Exo4D — giải quyết đúng gap vừa chẩn đoán (56.3% video mất pose vì MotionBERT không thấy tay; Ego-Exo4D có pose tay/người gán nhãn thủ công thật). (2) ego4d-video — có IMU (đúng modality omni-modal đang thiếu). (3) DROID (`cadene/droid`, Huu gửi thêm sau) — data action robot THẬT (Franka arm), khác hẳn nhóm pose-người-suy-luận. (4) DL3DV — ưu tiên thấp hơn (3D scene, không phải human action). (5) EgoPoseVR/EgoHumanoid/EgoInfinity — chưa đủ thông tin, cần scoping riêng.
+- **Ý Huu về "map Franka pose sang Unitree rồi recreate video"**: Huu tự nói "just a task for anyone interested" — KHÔNG phải chỉ thị ưu tiên, chỉ note lại, chưa bắt tay làm.
+- **Kết quả verify license (WebFetch trực tiếp, KHÔNG suy đoán)**:
+  - **DROID: SẠCH** — Apache 2.0 rõ trên trang, nguồn re-upload uy tín (Remi Cadene/LeRobot). 92,233 episode, 27M frame, 401GB.
+  - **Ego-Exo4D/ego4d-video: CHƯA XÁC NHẬN ĐƯỢC, có vênh với lời Huu** — `jaychempan/Ego-Exo4D-Relation-Train` không có license nào trên trang ("No dataset card yet"). `wofmanaf/ego4d-video` ghi license Apache-2.0 (không phải MIT như Huu nói), và **không thấy IMU data** trong preview (trái lời Huu "has imu data") — nội dung trang có vẻ là "EgoCOT" chứ không rõ đúng là Ego4D gốc. Không trang nào đề cập EULA gốc của Ego4D (dataset gốc theo hiểu biết chung là license nghiên cứu tùy chỉnh, cần ký thỏa thuận, KHÔNG đơn giản là permissive). Thử tra thẳng license PDF gốc trên ego4d-data.org — 404, chưa tìm được link đúng.
+  - **QUYẾT ĐỊNH: CHƯA tải Ego4D-họ nào** cho tới khi verify được license gốc thật, hoặc Huu xác nhận rõ nguồn/license cụ thể hơn (đã hỏi user, đang chờ).
+
+**Việc tồn đọng đầu phiên sau (ưu tiên theo thứ tự):**
+1. Check tiến độ/kết quả job reflatten FineVideo `drop_cosmos=0.5` (tmux session `v5_reflatten` hoặc log `logs/v5_reflatten_finevideo_20260724_1006.log`) — nếu xong, tính lại % cosmos trong output mới, so với bản 0.85 cũ.
+2. Hỏi user cách reach JUWELS để tokenize (không tự làm được từ JUPITER) — đây là blocker chính cho v5.
+3. Nếu muốn đồng bộ toàn mix, cân nhắc reflatten omnivideo_100k_w24 tương tự (chưa làm).
+4. Tự tìm đúng URL license gốc Ego4D/Ego-Exo4D (PDF vừa thử 404) hoặc chờ Huu xác nhận, trước khi đầu tư tải/xử lý.
+5. Chạy temporal-continuity test + sampled-decode eval cho v4 (đã hoãn từ trước, vẫn chưa làm) — bộ test greedy hiện tại không đủ nhạy để so v3/v4.
+6. Soạn + gửi câu trả lời thật cho Huu về câu hỏi "drop videos vì thiếu pose" (nội dung đã có sẵn ở mục 3 trên, chỉ cần Van Khue gửi qua Discord).
+
+## Viết sbatch tokenize v5 trên JUWELS, khảo sát + reorg thật toàn bộ `/e/data1/.../nguyen38/`, chẩn đoán chiến lược DROID + window=24/SNAC (25/07/2026)
+
+### 1. Viết `mv-scale/tokenize_finevideo_w24_dropcosmos50.sbatch` + stage data sang `/p` cho user tự `sbatch` (user tự SSH JUWELS, đúng cách vòng qua blocker "JUPITER không SSH được JUWELS" từ phiên trước)
+Dựa trên `tokenize_finevideo_w24.sbatch` (chỉ đổi input/output prefix). Tự thực hiện luôn bước staging (copy 76GB `megatron_dataset_adaptive_w24_dropcosmos50/` từ `/e` sang `/p/data1/mmlaion/shared/vla/finevideo_w24_dropcosmos50_flat/`) vì session này có quyền đọc/ghi cả `/e` lẫn `/p` — chạy nền qua `rsync` trong tmux (`v5_stage_copy`), xong sau ~2.5 phút, verify 160/160 file + size khớp 100% (76G cả 2 phía), `EXIT_CODE=0`. User chỉ cần `sbatch` bên JUWELS.
+
+**Phát hiện phụ**: job Phase 7 v5 (`1033979`, drop_cosmos=0.5) hoá ra đã **COMPLETED** từ trước (39 phút, 24/07 10:52) — entry phiên trước ghi "CHƯA XONG" đã lỗi thời. Số liệu thật: 247,704 record, 4.268B token, cosmos chiếm **84.1%** tổng token của dataset này riêng lẻ (so với ~92.5% pre-dropout ở bản gốc trước khi áp `drop_cosmos`) — xác nhận cơ chế drop hoạt động đúng, đúng hướng test giả thuyết "mật độ cosmos".
+
+### 2. Track lại lịch sử train model theo yêu cầu user — tổng hợp bảng đầy đủ v1→v5 (đọc CLAUDE.md + REPORT.md + PROGRESS_VI.md, verify qua `sacct`/log thật)
+v1 (`pab-spline-25b-test`, tokenizer lỗi) → model 2 `vla_adaptive` (2.84B token, window=8, tokenizer fixed) → **v2 (32.02B token, 1 epoch thật, PPL 5.77 — vẫn tốt nhất)** → v3 (14.78B, window=24, PPL 27.58) → `v3_docpacked` ablation (PPL 29.18, bác bỏ giả thuyết document-packing) → v4 (44.3B token xử lý qua 3 epoch, PPL 15.78, vẫn thua v2 dù nhiều token hơn) → v5 (đang chờ tokenize, drop_cosmos=0.5, test giả thuyết mật độ cosmos).
+
+### 3. Khảo sát chi tiết 3 path lưu trữ theo yêu cầu user (`/e/data1/.../nguyen38`, `/p/data1/mmlaion/shared/vla`, `/p/data1/mmlaion/shared/nguyen38`) — `du -sh` thật từng thư mục, không suy đoán
+Phát hiện lớn nhất: **`/p/data1/mmlaion/shared/nguyen38/data/` — bản mirror cũ ~11.7TB chưa từng được khảo sát trước đây** (không nằm trong memory `reference_data1_path_registry`/`project_data1_reorg_plan` cũ, cả 2 chỉ khảo sát `/e`), có vẻ là snapshot từ thời JUWELS còn là compute chính, bị bỏ quên khi pivot hẳn sang JUPITER — **CHƯA xoá**, đợi verify + đợi tokenize v5 xong trên `/p` trước (theo đúng yêu cầu user "ưu tiên dọn e trước để p cho tokenize xong đã"). Phát hiện khác: `FineVideo-VLA/megatron_dataset/` (2.0T, pre-adaptive, 0 script tham chiếu) và `sensenova_si8m/` (1.1T, chưa từng tokenize) — đều là dead data.
+
+### 4. Reorg thật toàn bộ `/e/data1/.../nguyen38/` theo 2 luồng window=8 (SNAC cũ) vs window=24 (SNAC L2/Leo mới) — user chọn move vật lý thật (không chỉ rename), đã làm xong hoàn toàn
+Cấu trúc mới: `window8_legacy/` (FineVideo-VLA subset window=8, `laion_emotional_roleplay_data`, `tokenizer_vla_qwen3`, `vla_v2_tokenized`, `vla_adaptive_tokenized`) · `window24_current/` (FineVideo-VLA subset w24, `omnivideo_100k/`, `harmony4d*/`, roleplay speak-format, `tokenizer_vla_qwen3_v2`, `vla_v3_tokenized`) · `shared_window_independent/` (`videos_staging`, `captions_dict`, `speech_segments`) · `alexandria/` (3 folder project khác, đã đồng ý từ phiên 23/07) · `_legacy_orphan/` (`megatron_dataset` 2.0T, `hf_upload_xyzt`, `qwen3_1.7b_vla_v3_test` checkpoint 56G — chờ user xác nhận xoá). `outputs/` (27 thư mục con Phase1-5, lẫn cả bản buggy/test) **cố ý để lại đợt sau** — user tự chọn qua `AskUserQuestion` sau khi thấy quy mô thật (21/64 script đụng vào, quá rủi ro để làm chung 1 đợt).
+
+Trước khi move: verify `squeue -u nguyen38` trống (an toàn), verify từng dir mơ hồ qua grep reference thật trước khi xếp bucket (không suy đoán).
+
+**Sửa code theo path mới — 59 file** (52 trong `3d-human-pose/` + 7 yaml `oellm-autoexp/config/` + `CLAUDE.md`/`README.md`), dùng script Python thay thế theo rule list (longest-prefix-first, đã tự verify thứ tự để tránh match nhầm prefix như `megatron_dataset` vs `megatron_dataset_v6`), sau đó **tự bắt thêm 3 loại lỗi sót thật mà script không thấy**:
+1. String Python nối 2 dòng (`"...FineVideo-VLA/"` + `"final_dataset_adaptive/..."` trên dòng kế) — bắt được ở `snac_finevideo.py`, `eval_any_mode_real.py`.
+2. Biến shell `DATA="...FineVideo-VLA"` định nghĩa 1 lần rồi dùng `${DATA}/subdir` ở chỗ khác — bắt được ở 6 slurm script (`submit_merge_adaptive*.sh`, `submit_phase7_flatten*.sh`) + `CLAUDE.md`/`README.md`, mỗi cái phải xác định đúng bucket theo **output nó tạo ra** (vd `submit_merge_adaptive_w24.sh` → window24, `submit_phase7_flatten_v6.sh` → window8) chứ không suy đoán chung 1 rule.
+3. Riêng `snac_finevideo.py`: code gốc đọc input window=8 (`final_dataset_adaptive`) nhưng ghi output vào bucket window=24 (`snac_tokens_w24`) — quirk lịch sử có thật, giữ nguyên logic, chỉ sửa đúng 2 path khác bucket nhau.
+
+**Verify thật sau khi sửa (không chỉ tin lời)**: grep repo-wide cuối cùng 0 path cũ còn sót (cả dạng biến, cả string 2 dòng) · toàn bộ 7 yaml training (`v2/v3/v3_docpacked/v3_test/v4/vla_adaptive/vla_adaptive_test`) — mọi `data_path` shard + `tokenizer_model` resolve ra file thật, 0 MISS · symlink `outputs/` (project1→data1) không bị ảnh hưởng.
+
+### 5. Track job tokenize JUWELS (`14141877`) qua filesystem `/p` share (không cần SSH JUWELS, chỉ cần đọc log/output trực tiếp)
+User báo job chạy ~19-20 phút, verify qua `slurm-output/tok_finevideo_w24_dc50_14141877.out`: 64/160 file đã xử lý (~40%), 15GB output tạm, không lỗi thật (chỉ warning HuggingFace tokenizer vô hại "sequence length > max"). So với job `tokenize_finevideo_w24` cũ (input 36GB, tổng 1731s=28.9 phút) — job này input 76GB (~2.1x) → ước tính tổng **~60 phút**, đúng nhịp tại thời điểm check.
+
+### 6. Thảo luận chiến lược: có cần thêm data không, và đánh giá window=24/SNAC mới có thật sự tốt hơn không
+- **DROID** (`cadene/droid`, verify qua WebFetch trực tiếp trang HF + trang dự án, không suy đoán): Apache 2.0 sạch, 92,223 episode/27M frame, tay Franka 7-DoF (không phải humanoid), 564 scene/13 viện/86 loại task, format LeRobot Parquet+AV1. **Lưu ý quan trọng đưa cho user**: không merge trực tiếp được vào scheme `<agent>` 17-khớp hiện tại — cần thiết kế vocab action riêng cho 7-DoF, đúng loại việc Huu từng nhắc ("map Franka sang Unitree") nhưng chưa ai làm, không phải download-and-merge.
+- **Window=24 + SNAC mới tốt hơn hay khó hơn**: đánh giá thật là **chưa kết luận được** — v3/v4 đổi quá nhiều biến cùng lúc (window, wrapper listen/speak, corpus nhỏ hơn 3x, Harmony4D, VÀ quan trọng nhất `drop_cosmos=0.85` lần đầu thật sự áp dụng trong khi v2 vô tình chưa từng dropout cosmos). Rủi ro thật không nằm ở window size tự thân mà ở áp lực token budget nó tạo ra (896 token/chunk cosmos ở w24 vs 200 ở w8, ~4.5x) buộc phải dropout mạnh để nhét vừa seq_length — đúng biến số job `dropcosmos50` đang test.
+
+### Trạng thái cuối phiên — checklist resume
+1. Job tokenize `14141877` (JUWELS) — check `slurm-output/tok_finevideo_w24_dc50_14141877.out`, ETA ước tính đã hết hạn tại thời điểm resume, khả năng đã xong.
+2. `_legacy_orphan/` (2.06TB, `/e`) — chờ user xác nhận xoá.
+3. `/p/data1/mmlaion/shared/nguyen38/data/` (11.7TB) — verify + xoá, đã hoãn tới khi tokenize v5 xong (giờ có thể đã đến lúc).
+4. `outputs/` (27 thư mục con) — reorg đợt sau, chưa làm.
+5. DROID — nếu muốn tích hợp thật, cần thiết kế vocab action 7-DoF riêng trước, chưa bắt đầu.
+6. `oellm-autoexp/config/experiments/nguyen38/*.yaml` (7 file) đã sửa path đúng nhưng **CHƯA commit** — repo này có nhiều thay đổi không liên quan (xoá config `korbi/*`) đang dở dang từ trước, cần `git add` chỉ đúng 7 file yaml, không đụng phần còn lại.

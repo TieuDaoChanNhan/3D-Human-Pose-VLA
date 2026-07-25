@@ -80,7 +80,7 @@ from pipeline_pose.phase4_yolo_cleaner import (  # noqa: E402
 # step_a/step_a_tokenize_video.py's CHUNK_SIZE comment for the full rationale.
 WINDOW_SIZE = 24
 
-DATA_ROOT = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/omnivideo_100k"
+DATA_ROOT = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/omnivideo_100k"
 DEFAULT_VIDEO_IDS_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "sports_subset_video_ids_filtered.txt")
 DEFAULT_VIDEOS_DIR = os.path.join(DATA_ROOT, "videos")
 DEFAULT_INPUT_DIR = os.path.join(DATA_ROOT, "pose_states_jsonl_30fps_w24")

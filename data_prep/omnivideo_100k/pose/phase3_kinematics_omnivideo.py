@@ -39,7 +39,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
 from pipeline_pose.phase3_kinematics_processor import KinematicPreprocessor, process_file  # noqa: E402
 
-DATA_ROOT = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/omnivideo_100k"
+DATA_ROOT = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/omnivideo_100k"
 DEFAULT_VIDEO_IDS_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "sports_subset_video_ids_filtered.txt")
 DEFAULT_INPUT_DIR = os.path.join(DATA_ROOT, "pose_3d_npy_30fps")
 DEFAULT_JSON_2D_DIR = os.path.join(DATA_ROOT, "pose_2d_json")

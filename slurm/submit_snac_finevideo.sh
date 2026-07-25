@@ -14,7 +14,7 @@
 # ppc64le env) -- rewritten for JUPITER (reformo/booster, /e/data1 paths,
 # env_stable_vla), matching pipeline_pose/snac_finevideo.py's fixed
 # defaults. Prereq: task list already built
-#   (/e/data1/datasets/playground/mmlaion/shared/nguyen38/FineVideo-VLA/snac_task_list.json,
+#   (/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/FineVideo-VLA/snac_task_list.json,
 #    40,798 videos / 372,385 activities, built 2026-07-23 12:13) --
 #   rerun `python pipeline_pose/snac_finevideo.py --build-tasks` first if
 #   final_dataset_adaptive changes.

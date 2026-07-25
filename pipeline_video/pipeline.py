@@ -637,7 +637,7 @@ if __name__ == "__main__":
     # 2026-07-23: see prototype/pipeline.py's identical change -- output
     # moved off exa_project1 onto exa_data1.
     output_base_path = os.path.join(
-        "/e/data1/datasets/playground/mmlaion/shared/nguyen38/FineVideo-VLA",
+        "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/FineVideo-VLA",
         "training_ready_w24",
     )
     os.makedirs(os.path.dirname(output_base_path), exist_ok=True)

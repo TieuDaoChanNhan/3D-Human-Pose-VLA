@@ -43,7 +43,7 @@ from phase3_kinematics_processor import (  # noqa: E402
     KinematicPreprocessor, create_windows, to_safe_json_list, interpolate_nan_gaps,
 )
 
-RESAMPLED_DIR = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d_h36m_30fps"
+RESAMPLED_DIR = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d_h36m_30fps"
 OUTPUT_DIR = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/outputs/harmony4d_cleaned"
 WINDOW_SIZE = 24
 STRIDE = 24

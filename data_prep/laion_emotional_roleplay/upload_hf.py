@@ -3,7 +3,7 @@
 Upload the SNAC-tokenized laion/emotional-roleplay-finetuning-dataset to HF.
 
 Source: 14 shards at
-  /e/data1/datasets/playground/mmlaion/shared/nguyen38/laion_emotional_roleplay_flattened_speak/
+  /e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/laion_emotional_roleplay_flattened_speak/
   roleplay_snac_speak_flat_{00000..00013}.jsonl
   (67,459/67,459 rows, 0 errors -- see PROGRESS_VI.md 2026-07-23 entry.)
 
@@ -32,8 +32,8 @@ import shutil
 
 from huggingface_hub import HfApi, login
 
-SOURCE_DIR = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/laion_emotional_roleplay_flattened_speak"
-UPLOAD_DIR = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/laion_emotional_roleplay_hf_upload_speak"
+SOURCE_DIR = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/laion_emotional_roleplay_flattened_speak"
+UPLOAD_DIR = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/laion_emotional_roleplay_hf_upload_speak"
 SHARD_PREFIX = "roleplay_snac_speak_flat"
 TOTAL_SHARDS = 14
 TEST_RATIO = 0.07  # 1/14 shards held out

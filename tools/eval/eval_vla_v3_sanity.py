@@ -1,19 +1,24 @@
 #!/usr/bin/env python3
 """
-VLA v2 (Qwen3, 5-source mix) model sanity check — token atomicity + greedy generation.
+VLA v3 (Qwen3, 6-source mix, window=24, listen/speak wrapper) model sanity check
+-- token atomicity + greedy/sampled generation, mirrors eval_vla_v2_sanity.py.
+
+Differences from v2 eval:
+  - tokenizer_vla_qwen3_v2 (atomic <listen>/<speak>, 2 extra SNAC bands)
+  - agent windows are 24 frames (t_0..t_23), not 8 (t_0..t_7)
+  - wrapper tags are <listen>...</listen> / <speak>...</speak>, not bare <snac>
+  - prompts pulled from a REAL flat_final_vla_adaptive_rank_8.jsonl record
+    (FineVideo-VLA/megatron_dataset_adaptive_w24, line 576, "Darth Maul" video)
+    instead of synthetic examples, so ground truth is exact.
 
 Run on login node with one GPU:
     module --force purge
     module load Stages/2025 GCC/13.3.0 Python/3.12.3 CUDA/12 PyTorch/2.5.1 torchvision/0.20.1
     source /e/project1/reformo/nguyen38/env_stable_vla/bin/activate
-    python tools/eval/eval_vla_v2_sanity.py
-
-Or specify a different checkpoint:
-    python tools/eval/eval_vla_v2_sanity.py --model-path output_vla/qwen3_1.7b_vla_v2/hf/iter_0005000
+    python tools/eval/eval_vla_v3_sanity.py
 """
 
 import argparse
-import json
 import re
 import sys
 import os
@@ -24,37 +29,31 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 sys.path.insert(0, os.path.join(os.path.dirname(__file__)))
 from decode_agent_tokens import decode, to_json, JOINT_NAMES, JOINT_INDEX
 
-# 2026-07-23: output_vla moved project1 -> data1 (freed inodes for the
-# project1 quota crisis) -- verified byte-for-byte match before the project1
-# copy was deleted, see PROGRESS_VI.md same-day entry.
-MODEL_PATH = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/output_vla/qwen3_1.7b_vla_v2/hf/iter_0007632"
-TOKENIZER_PATH = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window8_legacy/tokenizer_vla_qwen3"
+MODEL_PATH = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/output_vla/qwen3_1.7b_vla_v3/hf/iter_0000881"
+TOKENIZER_PATH = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/tokenizer_vla_qwen3_v2"
 
 
 # ── Test 1: Token atomicity ──────────────────────────────────────────────────
 
 ATOMICITY_TESTS = [
-    "<seed2>", "<seed2_1137>", "<seed2_0>", "<seed2_8191>",
-    "<cosmos>", "<cosmos_58567>", "<cosmos_0>", "<cosmos_63999>",
-    "<avclm_100>", "<avclm_0>", "<avclm_8191>",
-    "<avc_lm>", "<start_avclm>", "<start_cosmo>",
+    "<seed2>", "</seed2>", "<seed2_1137>", "<seed2_0>", "<seed2_8191>",
+    "<cosmos>", "</cosmos>", "<cosmos_58567>", "<cosmos_0>", "<cosmos_63999>",
     "<fps_30>",
-    "<agent>", "<agent_0>", "<agent_255>",
-    # 3 real bands only (L0 128266-132361, L1-even 132362-136457, L1-odd
-    # 144650-148745) -- 136458-144649 was never allocated (no L2 band; dataset
-    # encoding only ever emits L0+L1, see tokenize_snac.py). First+last id of
-    # each real band, not a guessed midpoint (an earlier version of this list
-    # had <snac_140553>, which silently fell in that unallocated gap and was
-    # never a real token to begin with -- caught 2026-07-22).
-    "<snac>", "<snac_128266>", "<snac_132361>", "<snac_132362>",
-    "<snac_136457>", "<snac_144650>", "<snac_148745>",
-    "<speech>", "<caption>", "<think>",
-    "<pelvis>", "</pelvis>",
-    "<pelvis_t_0>", "<pelvis_t_7>",
+    "<agent>", "</agent>",
+    # window=24 standard (project-wide since 2026-07-23): t goes 0-23, not 0-7.
+    "<pelvis_t_0>", "<pelvis_t_23>",
     "<pelvis_x_0>", "<pelvis_x_128>", "<pelvis_x_255>",
     "<r_wrist_y_200>", "<l_shoulder_z_50>",
-    "<r_hip>", "</r_hip>",
-    "<head_top>", "</head_top>",
+    "<r_hip>", "</r_hip>", "<head_top>", "</head_top>",
+    # listen/speak wrapper (tokenizer_vla_qwen3_v2, promoted 2026-07-23 specifically
+    # to fix this -- production tokenizer before it split these into 3-4 BPE pieces)
+    "<listen>", "</listen>", "<speak>", "</speak>",
+    # 5 real SNAC bands now (L0, L1-even, L1-odd, + 2 new bands found only by
+    # streaming real MV-Omni data -- 136458-144649 and 148746-156937)
+    "<snac_128266>", "<snac_132361>", "<snac_132362>", "<snac_136457>",
+    "<snac_136458>", "<snac_144649>", "<snac_144650>", "<snac_148745>",
+    "<snac_148746>", "<snac_156937>",
+    "<caption>", "</caption>",
 ]
 
 
@@ -85,59 +84,95 @@ def test_atomicity(tokenizer):
     return failed == 0
 
 
-# ── Test 2: Greedy generation ────────────────────────────────────────────────
+# ── Test 2: Greedy/sampled generation ────────────────────────────────────────
+# Real record: flat_final_vla_adaptive_rank_8.jsonl line 576 (FineVideo-VLA
+# megatron_dataset_adaptive_w24), a "Darth Maul lightsaber" clip. Chosen because
+# it is short (4,414 chars) and has caption+seed2+agent(w24)+2x listen, all in
+# the real post-drop_cosmos-0.85 wire format (no cosmos block survived dropout
+# in this particular record -- that itself is expected/representative).
+
+REAL_HEADER = (
+    "### Speech: and pretending it a walking stick.\n"
+    "### Title: Final Lightsaber Discover\n"
+    "### Keywords: Adaptability, self-reliance, preparedness. Determined, Powerful\n"
+    "### Context: This video delves into the chronicle of Darth Maul's various "
+    "lightsabers, showcasing his journey, challenges, and resilience through "
+    "different stages his life. Darth Maul assumes a fighting stance with the "
+    "lightsaber deactivated.\n"
+)
+REAL_CAPTION = (
+    "<caption> The person is wielding a red lightsaber and standing in a "
+    "fighting stance. </caption> "
+)
+REAL_SEED2 = (
+    "<seed2> <seed2_6750> <seed2_680> <seed2_597> <seed2_4966> <seed2_680> "
+    "<seed2_4166> <seed2_4354> <seed2_4202> <seed2_1473> <seed2_2157> "
+    "<seed2_2157> <seed2_2841> <seed2_2814> <seed2_4189> <seed2_781> "
+    "<seed2_4972> <seed2_2157> <seed2_4166> <seed2_3449> <seed2_5870> "
+    "<seed2_4189> <seed2_1473> <seed2_4189> <seed2_3449> <seed2_4189> "
+    "<seed2_2841> <seed2_4189> <seed2_7512> <seed2_1473> <seed2_4189> "
+    "<seed2_5626> <seed2_1253> </seed2> "
+)
+# First ~4 joints of the real <agent> block (pelvis, r_hip, r_knee, r_ankle),
+# window=24 -- expect the model to keep going through all 17 joints with valid
+# t_0-23 / x,y,z_0-255 tokens and close with </agent>.
+REAL_AGENT_PARTIAL = (
+    "<agent> <fps_30> "
+    "<pelvis> <pelvis_t_0> <pelvis_x_128> <pelvis_y_128> <pelvis_z_128> "
+    "<pelvis_t_23> <pelvis_x_128> <pelvis_y_128> <pelvis_z_128> </pelvis> "
+    "<r_hip> <r_hip_t_0> <r_hip_x_117> <r_hip_y_126> <r_hip_z_134> "
+    "<r_hip_t_23> <r_hip_x_117> <r_hip_y_126> <r_hip_z_134> </r_hip> "
+    "<r_knee> <r_knee_t_0> <r_knee_x_125> <r_knee_y_153> <r_knee_z_140> "
+    "<r_knee_t_23> <r_knee_x_125> <r_knee_y_153> <r_knee_z_140> </r_knee>"
+)
+REAL_AGENT_FULL_GT_LISTEN_START = (
+    "</agent> <listen> <snac_129915> <snac_135804> <snac_146210>"
+)
 
 PROMPTS = [
     {
-        "name": "full_prompt",
-        "prompt": (
-            "### Title: Home cooking tutorial\n"
-            "### Context: A person chops vegetables on a cutting board in a kitchen.\n"
-            "### Keywords: cooking, kitchen, food preparation\n"
-        ),
+        "name": "full_prompt_header",
+        "prompt": REAL_HEADER,
         "max_new_tokens": 2000,
-        "description": "Full training-like prompt, expect seed2 -> cosmos -> avclm -> agent sequence",
+        "description": "REAL record header only (no caption/seed2 yet) -- expect "
+                        "model to emit <caption>...<seed2>...(cosmos dropped 85% of "
+                        "the time)...<agent>...<listen> chain matching train-time wiring",
     },
     {
         "name": "agent_continuation",
-        "prompt": (
-            "### Context: Person raises both arms above head.\n"
-            "<seed2_3758> <seed2_2157> <seed2_3402> <cosmos_58567> <cosmos_56071> "
-            "<fps_30> <pelvis> <pelvis_t_0> <pelvis_x_128> <pelvis_y_128> <pelvis_z_128>"
-        ),
-        "max_new_tokens": 500,
-        "description": "Partial agent block, expect model completes the 17-joint sequence",
+        "prompt": REAL_HEADER + REAL_CAPTION + REAL_SEED2 + REAL_AGENT_PARTIAL,
+        "max_new_tokens": 1200,
+        "description": "REAL partial <agent> block (pelvis/r_hip/r_knee only, w24), "
+                        "expect model completes remaining 14 joints with valid "
+                        "t_0-23 range and closes </agent>",
+        "ground_truth_next_token": "<r_ankle>",
     },
     {
-        "name": "agent_from_scratch",
-        "prompt": (
-            "### Context: Person stands up from a chair.\n"
-            "<seed2_6750> <seed2_680> <seed2_5141> <seed2_7543> <seed2_680> "
-            "<seed2_1940> <seed2_6707> <seed2_6258> <seed2_2900> <seed2_2157> "
-            "<seed2_2157> <seed2_6707> <seed2_3488> <seed2_7543> <seed2_5141> "
-            "<seed2_4815> <seed2_2315> <seed2_1940> <seed2_2157> <seed2_4682> "
-            "<seed2_6707> <seed2_4773> <seed2_6707> <seed2_2157> <seed2_891> "
-            "<seed2_3488> <seed2_6506> <seed2_7940> <seed2_1603> <seed2_3488> "
-            "<seed2_6834> <seed2_6861>"
-        ),
-        "max_new_tokens": 2000,
-        "description": "Real seed2 block from training data, expect model continues with cosmos/agent",
+        "name": "seed2_to_agent_from_scratch",
+        "prompt": REAL_HEADER + REAL_CAPTION + REAL_SEED2,
+        "max_new_tokens": 1500,
+        "description": "REAL header+caption+full seed2 block (32 tokens, real "
+                        "training data) with NOTHING after -- expect model opens "
+                        "<agent> on its own and produces a w24 (t up to 23) block",
     },
     {
-        "name": "roleplay_speech",
+        "name": "listen_continuation",
         "prompt": (
-            "### Context: A synthetic emotional roleplay speech turn.\n"
-            "<speech> <snac_128266> <snac_130421> <snac_133908>"
+            REAL_HEADER + REAL_CAPTION + REAL_SEED2
+            + "<agent> <fps_30> <pelvis> <pelvis_t_0> <pelvis_x_128> <pelvis_y_128> "
+            "<pelvis_z_128> <pelvis_t_23> <pelvis_x_128> <pelvis_y_128> <pelvis_z_128> "
+            "</pelvis> </agent> <listen> <snac_129915> <snac_135804> <snac_146210> "
+            "<snac_131659> <snac_135930>"
         ),
-        "max_new_tokens": 500,
-        "description": "MV-Omni/roleplay-style snac speech prompt, new in v2 mix, expect snac continuation",
+        "max_new_tokens": 400,
+        "description": "Partial <listen> block (5/15 real snac tokens from ground "
+                        "truth) -- expect model continues with valid <snac_N> tokens "
+                        "and eventually closes </listen>",
     },
     {
-        "name": "image_caption",
-        # Real record synth_llava2_003266024 from
-        # /p/data1/mmlaion/shared/vla/synth_llava_flat/synth_llava2_shard-0000001.jsonl,
-        # seed2 block only (prompt ends right after </seed2>) -- expect model to emit
-        # <caption> ... </caption> on its own, like it saw at train time.
+        "name": "image_caption_synth_llava",
+        # Unaffected by the listen/speak wrapper change (that only touched audio) --
+        # reused verbatim from eval_vla_v2_sanity.py, real synth_llava2_003266024 record.
         "prompt": (
             "<seed2> <seed2_6750> <seed2_2157> <seed2_8000> <seed2_6026> <seed2_680> "
             "<seed2_4247> <seed2_3771> <seed2_5189> <seed2_3771> <seed2_2157> <seed2_2157> "
@@ -147,14 +182,14 @@ PROMPTS = [
             "<seed2_3395> <seed2_1227> <seed2_1088> </seed2>"
         ),
         "max_new_tokens": 300,
-        "description": "REAL synth_llava2 record (id=synth_llava2_003266024), seed2 block only, "
-                        "expect model to emit <caption>...</caption> matching train-time format",
+        "description": "REAL synth_llava2 record (id=synth_llava2_003266024), seed2 "
+                        "block only, expect model to emit <caption>...</caption>",
         "ground_truth": (
-            "<caption> The image is a portrait of a young boy wearing a green graduation cap "
-            "and gown. He is smiling and looking directly at the camera. The cap is green with "
-            "a yellow tassel hanging from the top. The gown is a dark green color with a white "
-            "collar and a green tie. The background is a solid green color. The image is framed "
-            "in a green ornate frame. </caption>"
+            "<caption> The image is a portrait of a young boy wearing a green graduation "
+            "cap and gown. He is smiling and looking directly at the camera. The cap is "
+            "green with a yellow tassel hanging from the top. The gown is a dark green "
+            "color with a white collar and a green tie. The background is a solid green "
+            "color. The image is framed in a green ornate frame. </caption>"
         ),
     },
 ]
@@ -165,11 +200,9 @@ def classify_token(token_str):
         return "seed2"
     if re.match(r"<cosmos_?\d*>", token_str):
         return "cosmos"
-    if re.match(r"<avclm_\d+>", token_str) or token_str in ("<avc_lm>", "<start_avclm>", "<start_cosmo>"):
-        return "avclm"
-    if re.match(r"<snac_?\d*>", token_str) or token_str == "<speech>":
+    if re.match(r"<snac_?\d*>", token_str) or token_str in ("<listen>", "</listen>", "<speak>", "</speak>"):
         return "snac"
-    if token_str == "<caption>":
+    if token_str in ("<caption>", "</caption>"):
         return "caption"
     if re.match(r"<fps_\d+>", token_str):
         return "agent"
@@ -181,7 +214,7 @@ def classify_token(token_str):
 
 
 def validate_agent_structure(tokens):
-    """Check if generated agent tokens have valid structure."""
+    """Check if generated agent tokens have valid structure (window=24: t 0-23)."""
     errors = []
     warnings = []
 
@@ -213,8 +246,8 @@ def validate_agent_structure(tokens):
             if m and int(m.group(1)) > 255:
                 errors.append(f"Out-of-range value in {t}")
         m = re.match(r"<\w+_t_(\d+)>", t)
-        if m and int(m.group(1)) > 7:
-            errors.append(f"Frame index > 7 in {t}")
+        if m and int(m.group(1)) > 23:
+            errors.append(f"Frame index > 23 in {t} (window=24 standard)")
 
     return errors, warnings
 
@@ -241,6 +274,8 @@ def test_generation(model, tokenizer, device, max_new_tokens=500, sample=False,
         if "ground_truth" in pinfo:
             print(f"\n  >>> GROUND TRUTH (what training data actually has next):")
             print(f"  {pinfo['ground_truth']}")
+        if "ground_truth_next_token" in pinfo:
+            print(f"\n  >>> GROUND TRUTH next open tag: {pinfo['ground_truth_next_token']}")
 
         input_ids = tokenizer.encode(pinfo["prompt"], return_tensors="pt").to(device)
         attention_mask = torch.ones_like(input_ids)
@@ -271,7 +306,6 @@ def test_generation(model, tokenizer, device, max_new_tokens=500, sample=False,
         generated_ids = output_ids[0, prompt_len:]
         generated_tokens = [tokenizer.decode([tid]).strip() for tid in generated_ids.tolist()]
 
-        # Token type breakdown
         counts = {}
         for t in generated_tokens:
             cat = classify_token(t)
@@ -280,12 +314,10 @@ def test_generation(model, tokenizer, device, max_new_tokens=500, sample=False,
         print(f"\n  Generated {len(generated_tokens)} tokens")
         print(f"  Breakdown: {counts}")
 
-        # Show FULL generated output (not truncated)
         full_output = " ".join(generated_tokens)
         print(f"\n  >>> FULL MODEL OUTPUT:")
         print(f"  {full_output}")
 
-        # Show where modality transitions happen
         transitions = []
         prev_cat = None
         for i, t in enumerate(generated_tokens):
@@ -295,9 +327,8 @@ def test_generation(model, tokenizer, device, max_new_tokens=500, sample=False,
                 prev_cat = cat
         if len(transitions) > 1:
             print(f"  Transitions: ", end="")
-            print(" -> ".join(f"{cat}@{i}" for i, cat, _ in transitions[:10]))
+            print(" -> ".join(f"{cat}@{i}" for i, cat, _ in transitions[:15]))
 
-        # Validate agent token structure (only meaningful for agent-bearing prompts)
         if any(classify_token(t) == "agent" for t in generated_tokens):
             errors, warnings = validate_agent_structure(generated_tokens)
             for e in errors:
@@ -306,7 +337,6 @@ def test_generation(model, tokenizer, device, max_new_tokens=500, sample=False,
             for w in warnings:
                 print(f"  WARN:  {w}")
 
-            # Try to decode agent tokens if present
             agent_str = " ".join(t for t in generated_tokens if classify_token(t) == "agent")
             if agent_str:
                 try:
@@ -328,10 +358,8 @@ def test_generation(model, tokenizer, device, max_new_tokens=500, sample=False,
     return all_ok
 
 
-# ── Main ─────────────────────────────────────────────────────────────────────
-
 def main():
-    p = argparse.ArgumentParser(description="VLA v2 model sanity check")
+    p = argparse.ArgumentParser(description="VLA v3 model sanity check")
     p.add_argument("--model-path", default=MODEL_PATH)
     p.add_argument("--tokenizer-path", default=TOKENIZER_PATH)
     p.add_argument("--max-new-tokens", type=int, default=500)

@@ -20,5 +20,5 @@ export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 # Pilot: 4 ranks * 6 videos = first 24 videos of sports_subset_video_ids.txt,
 # to measure real throughput + person-detection rate before running the full 1,256 videos.
 srun python -u data_prep/omnivideo_100k/pose/phase1_hrnet_omnivideo.py \
-    --output-dir /e/data1/datasets/playground/mmlaion/shared/nguyen38/omnivideo_100k/pose_2d_json_pilot \
+    --output-dir /e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/omnivideo_100k/pose_2d_json_pilot \
     --limit 24

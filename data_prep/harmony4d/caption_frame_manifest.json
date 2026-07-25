@@ -1,1456 +1,1456 @@
 [
  {
   "type": "mp4",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/01_hugging.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/01_hugging.zip",
   "member": "01_hugging/001_hugging/exo/cam01/images/rgb.mp4",
   "category": "01_hugging",
   "seq_id": "001_hugging"
  },
  {
   "type": "mp4",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/test/01_hugging.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/test/01_hugging.zip",
   "member": "01_hugging/002_hugging/exo/cam01/images/rgb.mp4",
   "category": "01_hugging",
   "seq_id": "002_hugging"
  },
  {
   "type": "mp4",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/02_grappling.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/02_grappling.zip",
   "member": "02_grappling/001_grappling/exo/cam01/images/rgb.mp4",
   "category": "02_grappling",
   "seq_id": "001_grappling"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/02_grappling.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/02_grappling.zip",
   "member": "02_grappling/002_grappling/exo/cam01/images/00244.jpg",
   "category": "02_grappling",
   "seq_id": "002_grappling"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/02_grappling.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/02_grappling.zip",
   "member": "02_grappling/005_grappling/exo/cam01/images/00036.jpg",
   "category": "02_grappling",
   "seq_id": "005_grappling"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/02_grappling.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/02_grappling.zip",
   "member": "02_grappling/010_grappling/exo/cam01/images/00240.jpg",
   "category": "02_grappling",
   "seq_id": "010_grappling"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/02_grappling.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/02_grappling.zip",
   "member": "02_grappling/012_grappling/exo/cam01/images/00097.jpg",
   "category": "02_grappling",
   "seq_id": "012_grappling"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/02_grappling.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/02_grappling.zip",
   "member": "02_grappling/014_grappling/exo/cam01/images/00094.jpg",
   "category": "02_grappling",
   "seq_id": "014_grappling"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/02_grappling.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/02_grappling.zip",
   "member": "02_grappling/017_grappling/exo/cam01/images/00301.jpg",
   "category": "02_grappling",
   "seq_id": "017_grappling"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/02_grappling.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/02_grappling.zip",
   "member": "02_grappling/019_grappling/exo/cam01/images/00033.jpg",
   "category": "02_grappling",
   "seq_id": "019_grappling"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/02_grappling.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/02_grappling.zip",
   "member": "02_grappling/021_grappling/exo/cam01/images/00055.jpg",
   "category": "02_grappling",
   "seq_id": "021_grappling"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/02_grappling.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/02_grappling.zip",
   "member": "02_grappling/023_grappling/exo/cam01/images/00219.jpg",
   "category": "02_grappling",
   "seq_id": "023_grappling"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/02_grappling.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/02_grappling.zip",
   "member": "02_grappling/024_grappling/exo/cam01/images/00201.jpg",
   "category": "02_grappling",
   "seq_id": "024_grappling"
  },
  {
   "type": "mp4",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/02_grappling.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/02_grappling.zip",
   "member": "02_grappling/026_grappling/exo/cam01/images/rgb.mp4",
   "category": "02_grappling",
   "seq_id": "026_grappling"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/02_grappling.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/02_grappling.zip",
   "member": "02_grappling/028_grappling/exo/cam01/images/00049.jpg",
   "category": "02_grappling",
   "seq_id": "028_grappling"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/02_grappling.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/02_grappling.zip",
   "member": "02_grappling/029_grappling/exo/cam01/images/00046.jpg",
   "category": "02_grappling",
   "seq_id": "029_grappling"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/02_grappling.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/02_grappling.zip",
   "member": "02_grappling/031_grappling/exo/cam01/images/00118.jpg",
   "category": "02_grappling",
   "seq_id": "031_grappling"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/02_grappling.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/02_grappling.zip",
   "member": "02_grappling/032_grappling/exo/cam01/images/00132.jpg",
   "category": "02_grappling",
   "seq_id": "032_grappling"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/02_grappling.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/02_grappling.zip",
   "member": "02_grappling/034_grappling/exo/cam01/images/00104.jpg",
   "category": "02_grappling",
   "seq_id": "034_grappling"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/02_grappling.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/02_grappling.zip",
   "member": "02_grappling/035_grappling/exo/cam01/images/00141.jpg",
   "category": "02_grappling",
   "seq_id": "035_grappling"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/02_grappling.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/02_grappling.zip",
   "member": "02_grappling/037_grappling/exo/cam01/images/00069.jpg",
   "category": "02_grappling",
   "seq_id": "037_grappling"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/02_grappling.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/02_grappling.zip",
   "member": "02_grappling/038_grappling/exo/cam01/images/00182.jpg",
   "category": "02_grappling",
   "seq_id": "038_grappling"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/02_grappling.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/02_grappling.zip",
   "member": "02_grappling/040_grappling/exo/cam01/images/00078.jpg",
   "category": "02_grappling",
   "seq_id": "040_grappling"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/02_grappling.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/02_grappling.zip",
   "member": "02_grappling/041_grappling/exo/cam01/images/00107.jpg",
   "category": "02_grappling",
   "seq_id": "041_grappling"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/02_grappling.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/02_grappling.zip",
   "member": "02_grappling/042_grappling/exo/cam01/images/00048.jpg",
   "category": "02_grappling",
   "seq_id": "042_grappling"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/02_grappling.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/02_grappling.zip",
   "member": "02_grappling/043_grappling/exo/cam01/images/00032.jpg",
   "category": "02_grappling",
   "seq_id": "043_grappling"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/02_grappling.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/02_grappling.zip",
   "member": "02_grappling/044_grappling/exo/cam01/images/00148.jpg",
   "category": "02_grappling",
   "seq_id": "044_grappling"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/02_grappling.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/02_grappling.zip",
   "member": "02_grappling/045_grappling/exo/cam01/images/00069.jpg",
   "category": "02_grappling",
   "seq_id": "045_grappling"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/02_grappling.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/02_grappling.zip",
   "member": "02_grappling/046_grappling/exo/cam01/images/00033.jpg",
   "category": "02_grappling",
   "seq_id": "046_grappling"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/02_grappling.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/02_grappling.zip",
   "member": "02_grappling/047_grappling/exo/cam01/images/00090.jpg",
   "category": "02_grappling",
   "seq_id": "047_grappling"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/02_grappling.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/02_grappling.zip",
   "member": "02_grappling/048_grappling/exo/cam01/images/00242.jpg",
   "category": "02_grappling",
   "seq_id": "048_grappling"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/02_grappling.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/02_grappling.zip",
   "member": "02_grappling/049_grappling/exo/cam01/images/00041.jpg",
   "category": "02_grappling",
   "seq_id": "049_grappling"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/02_grappling.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/02_grappling.zip",
   "member": "02_grappling/050_grappling/exo/cam01/images/00026.jpg",
   "category": "02_grappling",
   "seq_id": "050_grappling"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/02_grappling.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/02_grappling.zip",
   "member": "02_grappling/051_grappling/exo/cam01/images/00014.jpg",
   "category": "02_grappling",
   "seq_id": "051_grappling"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/02_grappling.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/02_grappling.zip",
   "member": "02_grappling/053_grappling/exo/cam01/images/00089.jpg",
   "category": "02_grappling",
   "seq_id": "053_grappling"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/02_grappling.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/02_grappling.zip",
   "member": "02_grappling/054_grappling/exo/cam01/images/00015.jpg",
   "category": "02_grappling",
   "seq_id": "054_grappling"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/02_grappling.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/02_grappling.zip",
   "member": "02_grappling/055_grappling/exo/cam01/images/00034.jpg",
   "category": "02_grappling",
   "seq_id": "055_grappling"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/03_grappling2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/03_grappling2.zip",
   "member": "03_grappling2/001_grappling2/exo/cam01/images/00079.jpg",
   "category": "03_grappling2",
   "seq_id": "001_grappling2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/03_grappling2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/03_grappling2.zip",
   "member": "03_grappling2/003_grappling2/exo/cam01/images/00209.jpg",
   "category": "03_grappling2",
   "seq_id": "003_grappling2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/03_grappling2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/03_grappling2.zip",
   "member": "03_grappling2/004_grappling2/exo/cam01/images/00091.jpg",
   "category": "03_grappling2",
   "seq_id": "004_grappling2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/03_grappling2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/03_grappling2.zip",
   "member": "03_grappling2/005_grappling2/exo/cam01/images/00234.jpg",
   "category": "03_grappling2",
   "seq_id": "005_grappling2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/03_grappling2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/03_grappling2.zip",
   "member": "03_grappling2/008_grappling2/exo/cam01/images/00138.jpg",
   "category": "03_grappling2",
   "seq_id": "008_grappling2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/03_grappling2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/03_grappling2.zip",
   "member": "03_grappling2/009_grappling2/exo/cam01/images/00115.jpg",
   "category": "03_grappling2",
   "seq_id": "009_grappling2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/03_grappling2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/03_grappling2.zip",
   "member": "03_grappling2/010_grappling2/exo/cam01/images/00049.jpg",
   "category": "03_grappling2",
   "seq_id": "010_grappling2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/03_grappling2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/03_grappling2.zip",
   "member": "03_grappling2/012_grappling2/exo/cam01/images/00086.jpg",
   "category": "03_grappling2",
   "seq_id": "012_grappling2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/03_grappling2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/03_grappling2.zip",
   "member": "03_grappling2/013_grappling2/exo/cam01/images/00268.jpg",
   "category": "03_grappling2",
   "seq_id": "013_grappling2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/03_grappling2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/03_grappling2.zip",
   "member": "03_grappling2/014_grappling2/exo/cam01/images/00027.jpg",
   "category": "03_grappling2",
   "seq_id": "014_grappling2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/03_grappling2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/03_grappling2.zip",
   "member": "03_grappling2/015_grappling2/exo/cam01/images/00043.jpg",
   "category": "03_grappling2",
   "seq_id": "015_grappling2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/03_grappling2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/03_grappling2.zip",
   "member": "03_grappling2/016_grappling2/exo/cam01/images/00043.jpg",
   "category": "03_grappling2",
   "seq_id": "016_grappling2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/03_grappling2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/03_grappling2.zip",
   "member": "03_grappling2/017_grappling2/exo/cam01/images/00061.jpg",
   "category": "03_grappling2",
   "seq_id": "017_grappling2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/03_grappling2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/03_grappling2.zip",
   "member": "03_grappling2/020_grappling2/exo/cam01/images/00090.jpg",
   "category": "03_grappling2",
   "seq_id": "020_grappling2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/03_grappling2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/03_grappling2.zip",
   "member": "03_grappling2/021_grappling2/exo/cam01/images/00129.jpg",
   "category": "03_grappling2",
   "seq_id": "021_grappling2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/03_grappling2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/03_grappling2.zip",
   "member": "03_grappling2/024_grappling2/exo/cam01/images/00071.jpg",
   "category": "03_grappling2",
   "seq_id": "024_grappling2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/test/03_grappling2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/test/03_grappling2.zip",
   "member": "03_grappling2/025_grappling2/exo/cam01/images/00037.jpg",
   "category": "03_grappling2",
   "seq_id": "025_grappling2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/test/03_grappling2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/test/03_grappling2.zip",
   "member": "03_grappling2/028_grappling2/exo/cam01/images/00076.jpg",
   "category": "03_grappling2",
   "seq_id": "028_grappling2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/test/03_grappling2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/test/03_grappling2.zip",
   "member": "03_grappling2/030_grappling2/exo/cam01/images/00151.jpg",
   "category": "03_grappling2",
   "seq_id": "030_grappling2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/test/03_grappling2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/test/03_grappling2.zip",
   "member": "03_grappling2/031_grappling2/exo/cam01/images/00043.jpg",
   "category": "03_grappling2",
   "seq_id": "031_grappling2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/test/03_grappling2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/test/03_grappling2.zip",
   "member": "03_grappling2/032_grappling2/exo/cam01/images/00029.jpg",
   "category": "03_grappling2",
   "seq_id": "032_grappling2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/test/03_grappling2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/test/03_grappling2.zip",
   "member": "03_grappling2/033_grappling2/exo/cam01/images/00087.jpg",
   "category": "03_grappling2",
   "seq_id": "033_grappling2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/test/03_grappling2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/test/03_grappling2.zip",
   "member": "03_grappling2/034_grappling2/exo/cam01/images/00025.jpg",
   "category": "03_grappling2",
   "seq_id": "034_grappling2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/test/03_grappling2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/test/03_grappling2.zip",
   "member": "03_grappling2/035_grappling2/exo/cam01/images/00015.jpg",
   "category": "03_grappling2",
   "seq_id": "035_grappling2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/test/03_grappling2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/test/03_grappling2.zip",
   "member": "03_grappling2/036_grappling2/exo/cam01/images/00069.jpg",
   "category": "03_grappling2",
   "seq_id": "036_grappling2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/test/03_grappling2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/test/03_grappling2.zip",
   "member": "03_grappling2/037_grappling2/exo/cam01/images/00038.jpg",
   "category": "03_grappling2",
   "seq_id": "037_grappling2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/test/03_grappling2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/test/03_grappling2.zip",
   "member": "03_grappling2/038_grappling2/exo/cam01/images/00148.jpg",
   "category": "03_grappling2",
   "seq_id": "038_grappling2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/test/03_grappling2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/test/03_grappling2.zip",
   "member": "03_grappling2/039_grappling2/exo/cam01/images/00016.jpg",
   "category": "03_grappling2",
   "seq_id": "039_grappling2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/test/03_grappling2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/test/03_grappling2.zip",
   "member": "03_grappling2/040_grappling2/exo/cam01/images/00260.jpg",
   "category": "03_grappling2",
   "seq_id": "040_grappling2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/test/03_grappling2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/test/03_grappling2.zip",
   "member": "03_grappling2/041_grappling2/exo/cam01/images/00224.jpg",
   "category": "03_grappling2",
   "seq_id": "041_grappling2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/test/03_grappling2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/test/03_grappling2.zip",
   "member": "03_grappling2/042_grappling2/exo/cam01/images/00024.jpg",
   "category": "03_grappling2",
   "seq_id": "042_grappling2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/test/03_grappling2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/test/03_grappling2.zip",
   "member": "03_grappling2/043_grappling2/exo/cam01/images/00164.jpg",
   "category": "03_grappling2",
   "seq_id": "043_grappling2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/04_sword_part1.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/04_sword_part1.zip",
   "member": "04_sword_part1/001_sword/exo/cam01/images/00301.jpg",
   "category": "04_sword_part1",
   "seq_id": "001_sword"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/04_sword_part1.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/04_sword_part1.zip",
   "member": "04_sword_part1/002_sword/exo/cam01/images/00301.jpg",
   "category": "04_sword_part1",
   "seq_id": "002_sword"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/04_sword_part1.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/04_sword_part1.zip",
   "member": "04_sword_part1/003_sword/exo/cam01/images/00301.jpg",
   "category": "04_sword_part1",
   "seq_id": "003_sword"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/04_sword_part1.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/04_sword_part1.zip",
   "member": "04_sword_part1/004_sword/exo/cam01/images/00306.jpg",
   "category": "04_sword_part1",
   "seq_id": "004_sword"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/04_sword_part1.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/04_sword_part1.zip",
   "member": "04_sword_part1/005_sword/exo/cam01/images/00271.jpg",
   "category": "04_sword_part1",
   "seq_id": "005_sword"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/04_sword_part1.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/04_sword_part1.zip",
   "member": "04_sword_part1/006_sword/exo/cam01/images/00301.jpg",
   "category": "04_sword_part1",
   "seq_id": "006_sword"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/04_sword_part1.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/04_sword_part1.zip",
   "member": "04_sword_part1/007_sword/exo/cam01/images/00301.jpg",
   "category": "04_sword_part1",
   "seq_id": "007_sword"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/04_sword_part1.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/04_sword_part1.zip",
   "member": "04_sword_part1/008_sword/exo/cam01/images/00301.jpg",
   "category": "04_sword_part1",
   "seq_id": "008_sword"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/04_sword_part1.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/04_sword_part1.zip",
   "member": "04_sword_part1/009_sword/exo/cam01/images/00301.jpg",
   "category": "04_sword_part1",
   "seq_id": "009_sword"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/04_sword_part2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/04_sword_part2.zip",
   "member": "04_sword_part2/010_sword/exo/cam01/images/00301.jpg",
   "category": "04_sword_part2",
   "seq_id": "010_sword"
  },
  {
   "type": "mp4",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/04_sword_part2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/04_sword_part2.zip",
   "member": "04_sword_part2/011_sword/exo/cam01/images/rgb.mp4",
   "category": "04_sword_part2",
   "seq_id": "011_sword"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/04_sword_part2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/04_sword_part2.zip",
   "member": "04_sword_part2/012_sword/exo/cam01/images/00301.jpg",
   "category": "04_sword_part2",
   "seq_id": "012_sword"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/04_sword_part2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/04_sword_part2.zip",
   "member": "04_sword_part2/013_sword/exo/cam01/images/00301.jpg",
   "category": "04_sword_part2",
   "seq_id": "013_sword"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/04_sword_part2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/04_sword_part2.zip",
   "member": "04_sword_part2/014_sword/exo/cam01/images/00301.jpg",
   "category": "04_sword_part2",
   "seq_id": "014_sword"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/04_sword_part2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/04_sword_part2.zip",
   "member": "04_sword_part2/015_sword/exo/cam01/images/00301.jpg",
   "category": "04_sword_part2",
   "seq_id": "015_sword"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/04_sword_part2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/04_sword_part2.zip",
   "member": "04_sword_part2/016_sword/exo/cam01/images/00301.jpg",
   "category": "04_sword_part2",
   "seq_id": "016_sword"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/04_sword_part2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/04_sword_part2.zip",
   "member": "04_sword_part2/017_sword/exo/cam01/images/00301.jpg",
   "category": "04_sword_part2",
   "seq_id": "017_sword"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/04_sword_part2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/04_sword_part2.zip",
   "member": "04_sword_part2/018_sword/exo/cam01/images/00301.jpg",
   "category": "04_sword_part2",
   "seq_id": "018_sword"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/04_sword_part2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/04_sword_part2.zip",
   "member": "04_sword_part2/019_sword/exo/cam01/images/00261.jpg",
   "category": "04_sword_part2",
   "seq_id": "019_sword"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/05_sword2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/05_sword2.zip",
   "member": "05_sword2/001_sword2/exo/cam01/images/00526.jpg",
   "category": "05_sword2",
   "seq_id": "001_sword2"
  },
  {
   "type": "mp4",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/05_sword2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/05_sword2.zip",
   "member": "05_sword2/002_sword2/exo/cam01/images/rgb.mp4",
   "category": "05_sword2",
   "seq_id": "002_sword2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/05_sword2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/05_sword2.zip",
   "member": "05_sword2/003_sword2/exo/cam01/images/00561.jpg",
   "category": "05_sword2",
   "seq_id": "003_sword2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/05_sword2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/05_sword2.zip",
   "member": "05_sword2/004_sword2/exo/cam01/images/00481.jpg",
   "category": "05_sword2",
   "seq_id": "004_sword2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/05_sword2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/05_sword2.zip",
   "member": "05_sword2/005_sword2/exo/cam01/images/00588.jpg",
   "category": "05_sword2",
   "seq_id": "005_sword2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/05_sword2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/05_sword2.zip",
   "member": "05_sword2/006_sword2/exo/cam01/images/00578.jpg",
   "category": "05_sword2",
   "seq_id": "006_sword2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/05_sword2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/05_sword2.zip",
   "member": "05_sword2/007_sword2/exo/cam01/images/00566.jpg",
   "category": "05_sword2",
   "seq_id": "007_sword2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/05_sword2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/05_sword2.zip",
   "member": "05_sword2/008_sword2/exo/cam01/images/00461.jpg",
   "category": "05_sword2",
   "seq_id": "008_sword2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/test/05_sword2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/test/05_sword2.zip",
   "member": "05_sword2/009_sword2/exo/cam01/images/00521.jpg",
   "category": "05_sword2",
   "seq_id": "009_sword2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/test/05_sword2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/test/05_sword2.zip",
   "member": "05_sword2/010_sword2/exo/cam01/images/00601.jpg",
   "category": "05_sword2",
   "seq_id": "010_sword2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/test/06_sword3.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/test/06_sword3.zip",
   "member": "06_sword3/001_sword3/exo/cam01/images/00301.jpg",
   "category": "06_sword3",
   "seq_id": "001_sword3"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/test/06_sword3.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/test/06_sword3.zip",
   "member": "06_sword3/002_sword3/exo/cam01/images/00301.jpg",
   "category": "06_sword3",
   "seq_id": "002_sword3"
  },
  {
   "type": "mp4",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/test/06_sword3.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/test/06_sword3.zip",
   "member": "06_sword3/003_sword3/exo/cam01/images/rgb.mp4",
   "category": "06_sword3",
   "seq_id": "003_sword3"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/test/06_sword3.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/test/06_sword3.zip",
   "member": "06_sword3/004_sword3/exo/cam01/images/00301.jpg",
   "category": "06_sword3",
   "seq_id": "004_sword3"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/test/06_sword3.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/test/06_sword3.zip",
   "member": "06_sword3/005_sword3/exo/cam01/images/00301.jpg",
   "category": "06_sword3",
   "seq_id": "005_sword3"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/test/06_sword3.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/test/06_sword3.zip",
   "member": "06_sword3/006_sword3/exo/cam01/images/00256.jpg",
   "category": "06_sword3",
   "seq_id": "006_sword3"
  },
  {
   "type": "mp4",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/07_ballroom.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/07_ballroom.zip",
   "member": "07_ballroom/001_ballroom/exo/cam01/images/rgb.mp4",
   "category": "07_ballroom",
   "seq_id": "001_ballroom"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/07_ballroom.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/07_ballroom.zip",
   "member": "07_ballroom/002_ballroom/exo/cam01/images/00301.jpg",
   "category": "07_ballroom",
   "seq_id": "002_ballroom"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/07_ballroom.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/07_ballroom.zip",
   "member": "07_ballroom/003_ballroom/exo/cam01/images/00301.jpg",
   "category": "07_ballroom",
   "seq_id": "003_ballroom"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/07_ballroom.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/07_ballroom.zip",
   "member": "07_ballroom/004_ballroom/exo/cam01/images/00135.jpg",
   "category": "07_ballroom",
   "seq_id": "004_ballroom"
  },
  {
   "type": "mp4",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/07_ballroom.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/07_ballroom.zip",
   "member": "07_ballroom/005_ballroom/exo/cam01/images/rgb.mp4",
   "category": "07_ballroom",
   "seq_id": "005_ballroom"
  },
  {
   "type": "mp4",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/07_ballroom.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/07_ballroom.zip",
   "member": "07_ballroom/006_ballroom/exo/cam01/images/rgb.mp4",
   "category": "07_ballroom",
   "seq_id": "006_ballroom"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/07_ballroom.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/07_ballroom.zip",
   "member": "07_ballroom/007_ballroom/exo/cam01/images/00301.jpg",
   "category": "07_ballroom",
   "seq_id": "007_ballroom"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/07_ballroom.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/07_ballroom.zip",
   "member": "07_ballroom/008_ballroom/exo/cam01/images/00301.jpg",
   "category": "07_ballroom",
   "seq_id": "008_ballroom"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/07_ballroom.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/07_ballroom.zip",
   "member": "07_ballroom/009_ballroom/exo/cam01/images/00120.jpg",
   "category": "07_ballroom",
   "seq_id": "009_ballroom"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/07_ballroom.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/07_ballroom.zip",
   "member": "07_ballroom/010_ballroom/exo/cam01/images/00301.jpg",
   "category": "07_ballroom",
   "seq_id": "010_ballroom"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/07_ballroom.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/07_ballroom.zip",
   "member": "07_ballroom/011_ballroom/exo/cam01/images/00301.jpg",
   "category": "07_ballroom",
   "seq_id": "011_ballroom"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/07_ballroom.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/07_ballroom.zip",
   "member": "07_ballroom/012_ballroom/exo/cam01/images/00132.jpg",
   "category": "07_ballroom",
   "seq_id": "012_ballroom"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/07_ballroom.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/07_ballroom.zip",
   "member": "07_ballroom/013_ballroom/exo/cam01/images/00167.jpg",
   "category": "07_ballroom",
   "seq_id": "013_ballroom"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/08_ballroom2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/08_ballroom2.zip",
   "member": "08_ballroom2/001_ballroom2/exo/cam01/images/00301.jpg",
   "category": "08_ballroom2",
   "seq_id": "001_ballroom2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/08_ballroom2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/08_ballroom2.zip",
   "member": "08_ballroom2/004_ballroom2/exo/cam01/images/00236.jpg",
   "category": "08_ballroom2",
   "seq_id": "004_ballroom2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/08_ballroom2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/08_ballroom2.zip",
   "member": "08_ballroom2/005_ballroom2/exo/cam01/images/00371.jpg",
   "category": "08_ballroom2",
   "seq_id": "005_ballroom2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/08_ballroom2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/08_ballroom2.zip",
   "member": "08_ballroom2/006_ballroom2/exo/cam01/images/00339.jpg",
   "category": "08_ballroom2",
   "seq_id": "006_ballroom2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/test/08_ballroom2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/test/08_ballroom2.zip",
   "member": "08_ballroom2/007_ballroom2/exo/cam01/images/00301.jpg",
   "category": "08_ballroom2",
   "seq_id": "007_ballroom2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/test/08_ballroom2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/test/08_ballroom2.zip",
   "member": "08_ballroom2/008_ballroom2/exo/cam01/images/00301.jpg",
   "category": "08_ballroom2",
   "seq_id": "008_ballroom2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/test/08_ballroom2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/test/08_ballroom2.zip",
   "member": "08_ballroom2/009_ballroom2/exo/cam01/images/00359.jpg",
   "category": "08_ballroom2",
   "seq_id": "009_ballroom2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/test/08_ballroom2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/test/08_ballroom2.zip",
   "member": "08_ballroom2/010_ballroom2/exo/cam01/images/00162.jpg",
   "category": "08_ballroom2",
   "seq_id": "010_ballroom2"
  },
  {
   "type": "mp4",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/09_karate.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/09_karate.zip",
   "member": "09_karate/004_karate/exo/cam05/images/rgb.mp4",
   "category": "09_karate",
   "seq_id": "004_karate"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/09_karate.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/09_karate.zip",
   "member": "09_karate/005_karate/exo/cam01/images/00117.jpg",
   "category": "09_karate",
   "seq_id": "005_karate"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/09_karate.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/09_karate.zip",
   "member": "09_karate/006_karate/exo/cam01/images/00046.jpg",
   "category": "09_karate",
   "seq_id": "006_karate"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/09_karate.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/09_karate.zip",
   "member": "09_karate/007_karate/exo/cam01/images/00251.jpg",
   "category": "09_karate",
   "seq_id": "007_karate"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/09_karate.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/09_karate.zip",
   "member": "09_karate/008_karate/exo/cam01/images/00139.jpg",
   "category": "09_karate",
   "seq_id": "008_karate"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/09_karate.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/09_karate.zip",
   "member": "09_karate/009_karate/exo/cam01/images/00105.jpg",
   "category": "09_karate",
   "seq_id": "009_karate"
  },
  {
   "type": "mp4",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/09_karate.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/09_karate.zip",
   "member": "09_karate/010_karate/exo/cam19/images/rgb.mp4",
   "category": "09_karate",
   "seq_id": "010_karate"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/09_karate.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/09_karate.zip",
   "member": "09_karate/012_karate/exo/cam01/images/00462.jpg",
   "category": "09_karate",
   "seq_id": "012_karate"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/09_karate.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/09_karate.zip",
   "member": "09_karate/013_karate/exo/cam01/images/00386.jpg",
   "category": "09_karate",
   "seq_id": "013_karate"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/09_karate.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/09_karate.zip",
   "member": "09_karate/015_karate/exo/cam01/images/00101.jpg",
   "category": "09_karate",
   "seq_id": "015_karate"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/10_karate2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/10_karate2.zip",
   "member": "10_karate2/001_karate2/exo/cam01/images/00076.jpg",
   "category": "10_karate2",
   "seq_id": "001_karate2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/10_karate2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/10_karate2.zip",
   "member": "10_karate2/002_karate2/exo/cam01/images/00155.jpg",
   "category": "10_karate2",
   "seq_id": "002_karate2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/10_karate2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/10_karate2.zip",
   "member": "10_karate2/003_karate2/exo/cam01/images/00420.jpg",
   "category": "10_karate2",
   "seq_id": "003_karate2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/10_karate2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/10_karate2.zip",
   "member": "10_karate2/004_karate2/exo/cam01/images/00201.jpg",
   "category": "10_karate2",
   "seq_id": "004_karate2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/10_karate2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/10_karate2.zip",
   "member": "10_karate2/005_karate2/exo/cam01/images/00420.jpg",
   "category": "10_karate2",
   "seq_id": "005_karate2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/10_karate2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/10_karate2.zip",
   "member": "10_karate2/007_karate2/exo/cam01/images/00062.jpg",
   "category": "10_karate2",
   "seq_id": "007_karate2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/10_karate2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/10_karate2.zip",
   "member": "10_karate2/009_karate2/exo/cam01/images/00073.jpg",
   "category": "10_karate2",
   "seq_id": "009_karate2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/11_karate3.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/11_karate3.zip",
   "member": "11_karate3/001_karate3/exo/cam01/images/00301.jpg",
   "category": "11_karate3",
   "seq_id": "001_karate3"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/11_karate3.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/11_karate3.zip",
   "member": "11_karate3/003_karate3/exo/cam01/images/00301.jpg",
   "category": "11_karate3",
   "seq_id": "003_karate3"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/11_karate3.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/11_karate3.zip",
   "member": "11_karate3/004_karate3/exo/cam01/images/00106.jpg",
   "category": "11_karate3",
   "seq_id": "004_karate3"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/11_karate3.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/11_karate3.zip",
   "member": "11_karate3/005_karate3/exo/cam01/images/00301.jpg",
   "category": "11_karate3",
   "seq_id": "005_karate3"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/11_karate3.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/11_karate3.zip",
   "member": "11_karate3/006_karate3/exo/cam01/images/00301.jpg",
   "category": "11_karate3",
   "seq_id": "006_karate3"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/11_karate3.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/11_karate3.zip",
   "member": "11_karate3/008_karate3/exo/cam01/images/00171.jpg",
   "category": "11_karate3",
   "seq_id": "008_karate3"
  },
  {
   "type": "mp4",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/12_mma.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/12_mma.zip",
   "member": "12_mma/001_mma/exo/cam01/images/rgb.mp4",
   "category": "12_mma",
   "seq_id": "001_mma"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/12_mma.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/12_mma.zip",
   "member": "12_mma/002_mma/exo/cam01/images/00301.jpg",
   "category": "12_mma",
   "seq_id": "002_mma"
  },
  {
   "type": "mp4",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/12_mma.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/12_mma.zip",
   "member": "12_mma/003_mma/exo/cam05/images/rgb.mp4",
   "category": "12_mma",
   "seq_id": "003_mma"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/12_mma.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/12_mma.zip",
   "member": "12_mma/006_mma/exo/cam01/images/00179.jpg",
   "category": "12_mma",
   "seq_id": "006_mma"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/12_mma.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/12_mma.zip",
   "member": "12_mma/007_mma/exo/cam01/images/00134.jpg",
   "category": "12_mma",
   "seq_id": "007_mma"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/12_mma.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/12_mma.zip",
   "member": "12_mma/008_mma/exo/cam01/images/00057.jpg",
   "category": "12_mma",
   "seq_id": "008_mma"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/12_mma.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/12_mma.zip",
   "member": "12_mma/009_mma/exo/cam01/images/00065.jpg",
   "category": "12_mma",
   "seq_id": "009_mma"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/12_mma.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/12_mma.zip",
   "member": "12_mma/012_mma/exo/cam01/images/00236.jpg",
   "category": "12_mma",
   "seq_id": "012_mma"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/12_mma.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/12_mma.zip",
   "member": "12_mma/013_mma/exo/cam01/images/00030.jpg",
   "category": "12_mma",
   "seq_id": "013_mma"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/13_mma2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/13_mma2.zip",
   "member": "13_mma2/001_mma2/exo/cam01/images/00287.jpg",
   "category": "13_mma2",
   "seq_id": "001_mma2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/13_mma2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/13_mma2.zip",
   "member": "13_mma2/002_mma2/exo/cam01/images/00106.jpg",
   "category": "13_mma2",
   "seq_id": "002_mma2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/13_mma2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/13_mma2.zip",
   "member": "13_mma2/003_mma2/exo/cam01/images/00099.jpg",
   "category": "13_mma2",
   "seq_id": "003_mma2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/13_mma2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/13_mma2.zip",
   "member": "13_mma2/005_mma2/exo/cam01/images/00145.jpg",
   "category": "13_mma2",
   "seq_id": "005_mma2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/13_mma2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/13_mma2.zip",
   "member": "13_mma2/006_mma2/exo/cam01/images/00126.jpg",
   "category": "13_mma2",
   "seq_id": "006_mma2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/13_mma2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/13_mma2.zip",
   "member": "13_mma2/007_mma2/exo/cam01/images/00094.jpg",
   "category": "13_mma2",
   "seq_id": "007_mma2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/13_mma2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/13_mma2.zip",
   "member": "13_mma2/011_mma2/exo/cam01/images/00018.jpg",
   "category": "13_mma2",
   "seq_id": "011_mma2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/13_mma2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/13_mma2.zip",
   "member": "13_mma2/014_mma2/exo/cam01/images/00084.jpg",
   "category": "13_mma2",
   "seq_id": "014_mma2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/13_mma2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/13_mma2.zip",
   "member": "13_mma2/016_mma2/exo/cam01/images/00046.jpg",
   "category": "13_mma2",
   "seq_id": "016_mma2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/13_mma2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/13_mma2.zip",
   "member": "13_mma2/018_mma2/exo/cam01/images/00040.jpg",
   "category": "13_mma2",
   "seq_id": "018_mma2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/13_mma2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/13_mma2.zip",
   "member": "13_mma2/020_mma2/exo/cam01/images/00045.jpg",
   "category": "13_mma2",
   "seq_id": "020_mma2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/13_mma2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/13_mma2.zip",
   "member": "13_mma2/021_mma2/exo/cam01/images/00118.jpg",
   "category": "13_mma2",
   "seq_id": "021_mma2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/13_mma2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/13_mma2.zip",
   "member": "13_mma2/024_mma2/exo/cam01/images/00026.jpg",
   "category": "13_mma2",
   "seq_id": "024_mma2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/13_mma2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/13_mma2.zip",
   "member": "13_mma2/025_mma2/exo/cam01/images/00118.jpg",
   "category": "13_mma2",
   "seq_id": "025_mma2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/13_mma2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/13_mma2.zip",
   "member": "13_mma2/026_mma2/exo/cam01/images/00077.jpg",
   "category": "13_mma2",
   "seq_id": "026_mma2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/13_mma2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/13_mma2.zip",
   "member": "13_mma2/029_mma2/exo/cam01/images/00046.jpg",
   "category": "13_mma2",
   "seq_id": "029_mma2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/13_mma2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/13_mma2.zip",
   "member": "13_mma2/030_mma2/exo/cam01/images/00034.jpg",
   "category": "13_mma2",
   "seq_id": "030_mma2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/13_mma2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/13_mma2.zip",
   "member": "13_mma2/032_mma2/exo/cam01/images/00183.jpg",
   "category": "13_mma2",
   "seq_id": "032_mma2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/13_mma2.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/13_mma2.zip",
   "member": "13_mma2/033_mma2/exo/cam01/images/00126.jpg",
   "category": "13_mma2",
   "seq_id": "033_mma2"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/14_mma3.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/14_mma3.zip",
   "member": "14_mma3/001_mma3/exo/cam01/images/00188.jpg",
   "category": "14_mma3",
   "seq_id": "001_mma3"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/14_mma3.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/14_mma3.zip",
   "member": "14_mma3/002_mma3/exo/cam01/images/00188.jpg",
   "category": "14_mma3",
   "seq_id": "002_mma3"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/14_mma3.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/14_mma3.zip",
   "member": "14_mma3/003_mma3/exo/cam01/images/00461.jpg",
   "category": "14_mma3",
   "seq_id": "003_mma3"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/14_mma3.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/14_mma3.zip",
   "member": "14_mma3/005_mma3/exo/cam01/images/00322.jpg",
   "category": "14_mma3",
   "seq_id": "005_mma3"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/14_mma3.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/14_mma3.zip",
   "member": "14_mma3/007_mma3/exo/cam01/images/00141.jpg",
   "category": "14_mma3",
   "seq_id": "007_mma3"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/14_mma3.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/14_mma3.zip",
   "member": "14_mma3/008_mma3/exo/cam01/images/00145.jpg",
   "category": "14_mma3",
   "seq_id": "008_mma3"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/14_mma3.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/14_mma3.zip",
   "member": "14_mma3/014_mma3/exo/cam01/images/00175.jpg",
   "category": "14_mma3",
   "seq_id": "014_mma3"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/15_mma4.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/15_mma4.zip",
   "member": "15_mma4/001_mma4/exo/cam01/images/00102.jpg",
   "category": "15_mma4",
   "seq_id": "001_mma4"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/15_mma4.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/15_mma4.zip",
   "member": "15_mma4/002_mma4/exo/cam01/images/00044.jpg",
   "category": "15_mma4",
   "seq_id": "002_mma4"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/15_mma4.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/15_mma4.zip",
   "member": "15_mma4/004_mma4/exo/cam01/images/00029.jpg",
   "category": "15_mma4",
   "seq_id": "004_mma4"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/15_mma4.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/15_mma4.zip",
   "member": "15_mma4/005_mma4/exo/cam01/images/00208.jpg",
   "category": "15_mma4",
   "seq_id": "005_mma4"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/15_mma4.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/15_mma4.zip",
   "member": "15_mma4/006_mma4/exo/cam01/images/00132.jpg",
   "category": "15_mma4",
   "seq_id": "006_mma4"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/15_mma4.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/15_mma4.zip",
   "member": "15_mma4/010_mma4/exo/cam01/images/00058.jpg",
   "category": "15_mma4",
   "seq_id": "010_mma4"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/15_mma4.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/15_mma4.zip",
   "member": "15_mma4/013_mma4/exo/cam01/images/00175.jpg",
   "category": "15_mma4",
   "seq_id": "013_mma4"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/15_mma4.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/15_mma4.zip",
   "member": "15_mma4/014_mma4/exo/cam01/images/00230.jpg",
   "category": "15_mma4",
   "seq_id": "014_mma4"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/test/15_mma4.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/test/15_mma4.zip",
   "member": "15_mma4/016_mma4/exo/cam01/images/00371.jpg",
   "category": "15_mma4",
   "seq_id": "016_mma4"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/15_mma4.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/15_mma4.zip",
   "member": "15_mma4/017_mma4/exo/cam01/images/00025.jpg",
   "category": "15_mma4",
   "seq_id": "017_mma4"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/15_mma4.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/15_mma4.zip",
   "member": "15_mma4/019_mma4/exo/cam01/images/00104.jpg",
   "category": "15_mma4",
   "seq_id": "019_mma4"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/15_mma4.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/15_mma4.zip",
   "member": "15_mma4/020_mma4/exo/cam01/images/00057.jpg",
   "category": "15_mma4",
   "seq_id": "020_mma4"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/15_mma4.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/15_mma4.zip",
   "member": "15_mma4/021_mma4/exo/cam01/images/00030.jpg",
   "category": "15_mma4",
   "seq_id": "021_mma4"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/15_mma4.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/15_mma4.zip",
   "member": "15_mma4/022_mma4/exo/cam01/images/00014.jpg",
   "category": "15_mma4",
   "seq_id": "022_mma4"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/15_mma4.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/15_mma4.zip",
   "member": "15_mma4/023_mma4/exo/cam01/images/00115.jpg",
   "category": "15_mma4",
   "seq_id": "023_mma4"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/train/15_mma4.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/train/15_mma4.zip",
   "member": "15_mma4/025_mma4/exo/cam01/images/00295.jpg",
   "category": "15_mma4",
   "seq_id": "025_mma4"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/test/16_mma5.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/test/16_mma5.zip",
   "member": "16_mma5/001_mma5/exo/cam01/images/00085.jpg",
   "category": "16_mma5",
   "seq_id": "001_mma5"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/test/16_mma5.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/test/16_mma5.zip",
   "member": "16_mma5/002_mma5/exo/cam01/images/00103.jpg",
   "category": "16_mma5",
   "seq_id": "002_mma5"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/test/16_mma5.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/test/16_mma5.zip",
   "member": "16_mma5/003_mma5/exo/cam01/images/00066.jpg",
   "category": "16_mma5",
   "seq_id": "003_mma5"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/test/16_mma5.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/test/16_mma5.zip",
   "member": "16_mma5/004_mma5/exo/cam01/images/00115.jpg",
   "category": "16_mma5",
   "seq_id": "004_mma5"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/test/16_mma5.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/test/16_mma5.zip",
   "member": "16_mma5/005_mma5/exo/cam01/images/00061.jpg",
   "category": "16_mma5",
   "seq_id": "005_mma5"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/test/16_mma5.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/test/16_mma5.zip",
   "member": "16_mma5/009_mma5/exo/cam01/images/00321.jpg",
   "category": "16_mma5",
   "seq_id": "009_mma5"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/test/16_mma5.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/test/16_mma5.zip",
   "member": "16_mma5/011_mma5/exo/cam01/images/00142.jpg",
   "category": "16_mma5",
   "seq_id": "011_mma5"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/test/16_mma5.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/test/16_mma5.zip",
   "member": "16_mma5/013_mma5/exo/cam01/images/00211.jpg",
   "category": "16_mma5",
   "seq_id": "013_mma5"
  },
  {
   "type": "jpg",
-  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d/test/16_mma5.zip",
+  "zip": "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d/test/16_mma5.zip",
   "member": "16_mma5/016_mma5/exo/cam01/images/00171.jpg",
   "category": "16_mma5",
   "seq_id": "016_mma5"

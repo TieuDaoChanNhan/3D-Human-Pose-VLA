@@ -119,6 +119,11 @@ All datasets under `EmpathicRobotics/`, split 152 train / 8 test shards (95/5, s
 
 ## End-to-End Pipeline
 
+**Note (2026-07-25): this diagram describes the original window=8 pipeline
+(8-frame Cosmos chunks). The current/live pipeline uses window=24 — see
+`window24_current/` under `$DATA` and CLAUDE.md. Data below moved to
+`$DATA/window8_legacy/` during the 2026-07-25 data1 reorg.**
+
 ```
 $DATA = /e/data1/datasets/playground/mmlaion/shared/nguyen38
 
@@ -127,7 +132,7 @@ $DATA = /e/data1/datasets/playground/mmlaion/shared/nguyen38
 Step A   pipeline_video/pipeline.py   (submit_official.sbatch, 40 nodes × 4 GPU)
          Extracts frames at 30fps; tokenizes every activity segment with
          Seed2 (1fps), Cosmos (8-frame), and AVC-LM (8-frame).
-         → $DATA/FineVideo-VLA/training_ready_rank_*.jsonl
+         → $DATA/window8_legacy/FineVideo-VLA/training_ready_rank_*.jsonl
 
 ──────────────── BRANCH B: 3D Pose / Adaptive PCHIP Tokens ───────────────
 
@@ -161,12 +166,12 @@ Step G   pipeline_pose/phase5_adaptive_pchip.py     (slurm/submit_phase5_adaptiv
 Step H   pipeline_pose/phase6_merge_adaptive.py     (slurm/submit_merge_adaptive.sh)
          Injects <agent> blocks (with per-joint named tokens) after each
          <avc_lm> block in training_ready files. Adds chunk_timing + timing_meta.
-         → $DATA/FineVideo-VLA/final_dataset_adaptive/final_vla_adaptive_rank_*.jsonl
+         → $DATA/window8_legacy/FineVideo-VLA/final_dataset_adaptive/final_vla_adaptive_rank_*.jsonl
 
 Step I   pipeline_pose/phase7_flatten.py            (run on login node or SLURM)
          Hierarchical JSON → Megatron flat JSONL.
          Agent blocks pass through unchanged (already self-describing).
-         → $DATA/FineVideo-VLA/megatron_dataset_adaptive/flat_*.jsonl
+         → $DATA/window8_legacy/FineVideo-VLA/megatron_dataset_adaptive/flat_*.jsonl
 
 Step J   tokenize_vla_adaptive.sbatch          (4 nodes, Ray-distributed)
          Megatron-LM tokenization using EmpathicRobotics/tokenizer-vla-adaptive.
@@ -302,12 +307,12 @@ All data lives under `$DATA = /e/data1/datasets/playground/mmlaion/shared/nguyen
 |------|------|
 | FineVideo HF dataset | `/e/scratch/reformo/nguyen38/finevideo_disk` |
 | Intermediate pose outputs | `$DATA/outputs/` |
-| `training_ready` JSONL (Step A output) | `$DATA/FineVideo-VLA/training_ready_rank_*.jsonl` |
-| Adaptive merged JSONL (Step H output) | `$DATA/FineVideo-VLA/final_dataset_adaptive/final_vla_adaptive_rank_*.jsonl` |
-| Flat Megatron JSONL (Step I output) | `$DATA/FineVideo-VLA/megatron_dataset_adaptive/flat_*.jsonl` |
+| `training_ready` JSONL (Step A output) | `$DATA/window8_legacy/FineVideo-VLA/training_ready_rank_*.jsonl` |
+| Adaptive merged JSONL (Step H output) | `$DATA/window8_legacy/FineVideo-VLA/final_dataset_adaptive/final_vla_adaptive_rank_*.jsonl` |
+| Flat Megatron JSONL (Step I output) | `$DATA/window8_legacy/FineVideo-VLA/megatron_dataset_adaptive/flat_*.jsonl` |
 | Phase 5 adaptive tokens | `$DATA/outputs/agent_tokens_adaptive/{video_id}_tokens.jsonl` |
-| HF upload staging (merged) | `$DATA/FineVideo-VLA/hf_upload_adaptive/` |
-| HF upload staging (flattened) | `$DATA/FineVideo-VLA/hf_upload_flattened_adaptive/` |
+| HF upload staging (merged) | `$DATA/window8_legacy/FineVideo-VLA/hf_upload_adaptive/` |
+| HF upload staging (flattened) | `$DATA/window8_legacy/FineVideo-VLA/hf_upload_flattened_adaptive/` |
 
 ---
 

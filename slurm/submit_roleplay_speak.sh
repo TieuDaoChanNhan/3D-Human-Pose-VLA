@@ -14,7 +14,7 @@
 # docstring). Never run at full scale before (L2 wasn't decided until this
 # session). Source data copied from /p to /e first (compute nodes don't
 # mount /p -- see feedback_data_storage_location memory) -- see
-# /e/data1/datasets/playground/mmlaion/shared/nguyen38/laion_emotional_roleplay_data/.
+# /e/data1/datasets/playground/mmlaion/shared/nguyen38/window8_legacy/laion_emotional_roleplay_data/.
 # Output uses the "speak" filename prefix (roleplay_snac_speak_flat_*.jsonl),
 # separate from the existing listen-format shards -- doesn't collide, no
 # risk of the resume-skip trap that hit Step A.
@@ -28,7 +28,7 @@ cd /e/project1/reformo/nguyen38/3d-human-pose
 
 python -u data_prep/laion_emotional_roleplay/tokenize_snac.py \
     --format speak \
-    --input-dir /e/data1/datasets/playground/mmlaion/shared/nguyen38/laion_emotional_roleplay_data \
-    --output-dir /e/data1/datasets/playground/mmlaion/shared/nguyen38/laion_emotional_roleplay_flattened_speak
+    --input-dir /e/data1/datasets/playground/mmlaion/shared/nguyen38/window8_legacy/laion_emotional_roleplay_data \
+    --output-dir /e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/laion_emotional_roleplay_flattened_speak
 
 echo "DONE"

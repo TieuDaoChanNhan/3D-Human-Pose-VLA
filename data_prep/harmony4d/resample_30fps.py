@@ -38,8 +38,8 @@ Resumable: skips a (sequence, person) if its output .npy already exists.
 
 Usage:
     python3 data_prep/harmony4d/resample_30fps.py \
-        --input-dir  /e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d_h36m_native20fps \
-        --output-dir /e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d_h36m_30fps
+        --input-dir  /e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d_h36m_native20fps \
+        --output-dir /e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d_h36m_30fps
 """
 import argparse
 import glob
@@ -72,9 +72,9 @@ def resample_track(arr: np.ndarray, frame_idx: np.ndarray, native_fps: float = N
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--input-dir",
-                    default="/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d_h36m_native20fps")
+                    default="/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d_h36m_native20fps")
     ap.add_argument("--output-dir",
-                    default="/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d_h36m_30fps")
+                    default="/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d_h36m_30fps")
     args = ap.parse_args()
 
     pose_files = sorted(glob.glob(os.path.join(args.input_dir, "*", "*", "*.npy")))

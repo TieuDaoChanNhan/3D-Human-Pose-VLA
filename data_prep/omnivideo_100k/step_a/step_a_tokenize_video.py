@@ -21,7 +21,7 @@ import os
 import sys
 
 PROTOTYPE_DIR = "/e/project1/reformo/nguyen38/prototype"
-DATA_ROOT = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/omnivideo_100k"
+DATA_ROOT = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/omnivideo_100k"
 DEFAULT_VIDEOS_DIR = os.path.join(DATA_ROOT, "videos")
 DEFAULT_CAPTIONS_JSONL = os.path.join(DATA_ROOT, "omnivideo_100k_segment_captions.jsonl")
 DEFAULT_OUTPUT_DIR = os.path.join(DATA_ROOT, "step_a_output")

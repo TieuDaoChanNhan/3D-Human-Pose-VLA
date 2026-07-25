@@ -44,7 +44,7 @@ structure before committing to the full pull, e.g.:
     python3 -c "
     from huggingface_hub import hf_hub_download
     hf_hub_download(repo_id='Jyun-Ting/Harmony4D', repo_type='dataset',
-                     filename='test/01_hugging.zip', local_dir='/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d')
+                     filename='test/01_hugging.zip', local_dir='/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d')
     "
 (test/01_hugging.zip is the smallest file in the repo at 1.7GB.)
 
@@ -63,7 +63,7 @@ os.environ.setdefault("HF_HUB_DISABLE_XET", "1")  # Xet backend flaky on this cl
 from huggingface_hub import login, snapshot_download, hf_hub_download
 
 REPO_ID = "Jyun-Ting/Harmony4D"
-LOCAL_DIR = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d"
+LOCAL_DIR = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d"
 MAX_WORKERS = 16
 RETRY_DELAY_SEC = 30
 SAMPLE_FILE = "test/01_hugging.zip"  # smallest file in the repo, 1.7GB

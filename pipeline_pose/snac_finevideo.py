@@ -59,17 +59,17 @@ import torch
 
 # ── Paths ─────────────────────────────────────────────────────────────────────
 
-VIDEO_DIR    = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/videos_staging"
+VIDEO_DIR    = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/shared_window_independent/videos_staging"
 # Still scanned for activity time_range_sec + has_agent -- those don't depend
 # on window size. chunk_timing (per-window breakdown) is IGNORED (see
 # _scan_one_rank_file docstring) because this file is window=8-based (the
 # pre-pivot merge) and Phase 6 hasn't rerun at window=24 yet; n_chunks is
 # instead recomputed independently from CHUNK_SIZE below, same pattern as
 # data_prep/omnivideo_100k/snac_omnivideo.py.
-INPUT_GLOB   = ("/e/data1/datasets/playground/mmlaion/shared/nguyen38/FineVideo-VLA/"
+INPUT_GLOB   = ("/e/data1/datasets/playground/mmlaion/shared/nguyen38/window8_legacy/FineVideo-VLA/"
                 "final_dataset_adaptive/final_vla_adaptive_rank_*.jsonl")
-OUTPUT_DIR   = ("/e/data1/datasets/playground/mmlaion/shared/nguyen38/FineVideo-VLA/snac_tokens_w24")
-TASK_CACHE   = ("/e/data1/datasets/playground/mmlaion/shared/nguyen38/FineVideo-VLA/"
+OUTPUT_DIR   = ("/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/FineVideo-VLA/snac_tokens_w24")
+TASK_CACHE   = ("/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/FineVideo-VLA/"
                 "snac_task_list_w24.json")
 HF_CACHE     = "/e/project1/reformo/nguyen38/jupiter_cache/huggingface"
 SNAC_MODEL   = "hubertsiuzdak/snac_24khz"

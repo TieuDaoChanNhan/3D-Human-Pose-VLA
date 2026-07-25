@@ -57,10 +57,10 @@ STRIDE = 24              # must match step_a/step_a_tokenize_video.py's CHUNK_SI
                          # and pipeline_pose/phase5_adaptive_pchip.py's --stride
                          # (2026-07-23: window=24 pivot, was 8)
 
-DEFAULT_INPUT_DIR = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/omnivideo_100k/step_a_output_w24"
-DEFAULT_AGENT_DIR = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/omnivideo_100k/pose_agent_tokens_adaptive_w24"
-DEFAULT_SNAC_DIR = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/omnivideo_100k/snac_tokens_w24"
-DEFAULT_OUTPUT_DIR = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/omnivideo_100k/video_agent_merged_w24"
+DEFAULT_INPUT_DIR = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/omnivideo_100k/step_a_output_w24"
+DEFAULT_AGENT_DIR = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/omnivideo_100k/pose_agent_tokens_adaptive_w24"
+DEFAULT_SNAC_DIR = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/omnivideo_100k/snac_tokens_w24"
+DEFAULT_OUTPUT_DIR = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/omnivideo_100k/video_agent_merged_w24"
 
 
 def load_agent_windows(video_id, agent_dir):

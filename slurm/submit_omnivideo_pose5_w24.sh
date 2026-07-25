@@ -16,7 +16,7 @@
 source /e/project1/reformo/nguyen38/3d-human-pose/setup_motionbert.sh
 cd /e/project1/reformo/nguyen38/3d-human-pose
 
-DATA_ROOT=/e/data1/datasets/playground/mmlaion/shared/nguyen38/omnivideo_100k
+DATA_ROOT=/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/omnivideo_100k
 
 python -u pipeline_pose/phase5_adaptive_pchip.py \
     --input-dir  "$DATA_ROOT/pose_yolo_cleaned_30fps_w24" \

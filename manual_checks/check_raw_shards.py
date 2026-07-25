@@ -4,7 +4,7 @@ from transformers import AutoTokenizer
 
 # 1. Specify the model and Megatron binary file paths
 model_path = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/output_vla/vla_25b_test/hf/iter_0006000"
-binary_dataset_path = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/tokenized_output_project/vla_25b/data_shard_00000.bin"  # fill in the actual .bin file used at training time
+binary_dataset_path = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/alexandria/tokenized_output_project/vla_25b/data_shard_00000.bin"  # fill in the actual .bin file used at training time
 
 tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
 

@@ -19,8 +19,8 @@ source /e/project1/reformo/nguyen38/env_stable_vla/bin/activate
 
 cd /e/project1/reformo/nguyen38/3d-human-pose
 
-HARMONY4D_ROOT="/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d"
-OUTPUT_DIR="/e/data1/datasets/playground/mmlaion/shared/nguyen38/harmony4d_h36m_native20fps"
+HARMONY4D_ROOT="/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d"
+OUTPUT_DIR="/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/harmony4d_h36m_native20fps"
 mkdir -p "$OUTPUT_DIR"
 
 NUM_WORKERS=22   # 15 train zips + 7 test zips -- one worker per zip file

@@ -4,7 +4,7 @@ outputs/fps_lookup.json  →  { video_id: fps_float, ... }
 
 Run from repo root:
     python tools/extract/extract_fps.py \
-        --video-dir /e/data1/datasets/playground/mmlaion/shared/nguyen38/videos_staging \
+        --video-dir /e/data1/datasets/playground/mmlaion/shared/nguyen38/shared_window_independent/videos_staging \
         --output    outputs/fps_lookup.json \
         --workers   32
 """
