@@ -1,0 +1,21 @@
+{
+  "seed": 42,
+  "prompt_len_tokens": 611,
+  "primed_block": {
+    "n_ids": 200
+  },
+  "n_new_blocks": 1,
+  "results": [
+    {
+      "chunk_index": 0,
+      "n_ids": 200,
+      "complete": true,
+      "position_match_frac": 0.025,
+      "seq_similarity": 0.01,
+      "macro_repeat": false,
+      "verdict": "PROGRESSING"
+    }
+  ],
+  "overall": "PROGRESSING (at least one transition shows real change)",
+  "n_gt_blocks_available_for_reference": 2
+}

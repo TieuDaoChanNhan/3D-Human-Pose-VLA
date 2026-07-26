@@ -1,0 +1,36 @@
+{
+  "seed": 42,
+  "prompt_len_tokens": 722,
+  "primed_block": {
+    "source": "primed_real_block0",
+    "decode_error": null,
+    "n_tokens": 277
+  },
+  "n_new_blocks": 2,
+  "results": [
+    {
+      "window_index": 0,
+      "n_tokens": 601,
+      "complete": true,
+      "decode_error": null,
+      "n_frames": 8,
+      "mean_within_window_motion_m": 0.1637,
+      "cross_window_disp_m": 0.0684,
+      "frozen_vs_prev": false,
+      "verdict": "PROGRESSING"
+    },
+    {
+      "window_index": 1,
+      "n_tokens": 601,
+      "complete": true,
+      "decode_error": null,
+      "n_frames": 8,
+      "mean_within_window_motion_m": 0.1947,
+      "cross_window_disp_m": 0.0755,
+      "frozen_vs_prev": false,
+      "verdict": "PROGRESSING"
+    }
+  ],
+  "overall": "PROGRESSING (at least one transition shows real change)",
+  "n_gt_blocks_available_for_reference": 2
+}

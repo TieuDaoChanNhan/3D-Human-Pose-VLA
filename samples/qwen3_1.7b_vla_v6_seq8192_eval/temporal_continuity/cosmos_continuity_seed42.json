@@ -1,0 +1,39 @@
+{
+  "seed": 42,
+  "prompt_len_tokens": 611,
+  "primed_block": {
+    "n_ids": 200
+  },
+  "n_new_blocks": 3,
+  "results": [
+    {
+      "chunk_index": 0,
+      "n_ids": 200,
+      "complete": true,
+      "position_match_frac": 0.015,
+      "seq_similarity": 0.005,
+      "macro_repeat": false,
+      "verdict": "PROGRESSING"
+    },
+    {
+      "chunk_index": 1,
+      "n_ids": 200,
+      "complete": true,
+      "position_match_frac": 0.0,
+      "seq_similarity": 0.0,
+      "macro_repeat": false,
+      "verdict": "PROGRESSING"
+    },
+    {
+      "chunk_index": 2,
+      "n_ids": 137,
+      "complete": false,
+      "position_match_frac": 0.0,
+      "seq_similarity": 0.0,
+      "macro_repeat": false,
+      "verdict": "PROGRESSING"
+    }
+  ],
+  "overall": "PROGRESSING (at least one transition shows real change)",
+  "n_gt_blocks_available_for_reference": 2
+}

@@ -3156,3 +3156,256 @@ User báo job chạy ~19-20 phút, verify qua `slurm-output/tok_finevideo_w24_dc
 4. `outputs/` (27 thư mục con) — reorg đợt sau, chưa làm.
 5. DROID — nếu muốn tích hợp thật, cần thiết kế vocab action 7-DoF riêng trước, chưa bắt đầu.
 6. `oellm-autoexp/config/experiments/nguyen38/*.yaml` (7 file) đã sửa path đúng nhưng **CHƯA commit** — repo này có nhiều thay đổi không liên quan (xoá config `korbi/*`) đang dở dang từ trước, cần `git add` chỉ đúng 7 file yaml, không đụng phần còn lại.
+
+## Tokenize v5 xong, launch training v5 thật, dọn nốt `/p/nguyen38/data` (11.7TB), đọc paper AnyGPT theo yêu cầu Huu + thiết kế VLA-Instruct (25/07/2026, tiếp)
+
+### 1. Commit + push đợt reorg `/e` (từ phiên trước) — 52 file, `d45c9a2`
+User yêu cầu "update progress rồi commit&push". Verify `PROGRESS.md` (bản English) đã ngừng cập nhật từ 22/07 — chỉ `PROGRESS_VI.md` còn sống, chỉ cập nhật file này. Stage có chọn lọc (`git add -u` trừ `miniforge3`/`samples/` không liên quan phiên này + `git add` 4 file mới), push thành công — GitHub báo repo đã đổi URL sang `TieuDaoChanNhan/finevideo-vla` (redirect vẫn hoạt động, chưa đổi remote). `oellm-autoexp` (7 yaml) cố ý **không** commit theo yêu cầu user ("kệ oellm-autoexp") vì repo đó có nhiều thay đổi dở dang không liên quan (xoá config `korbi/*`).
+
+### 2. Job tokenize `14141877` (JUWELS) — COMPLETED, 53.1 phút, verify qua filesystem `/p` share
+0 lỗi thật (15 dòng "error" chỉ là warning HuggingFace benign). Output 5 shard/42GB. Copy về `/e/window24_current/vla_v3_tokenized/finevideo_w24_dropcosmos50/` — checksum kích thước khớp.
+
+### 3. Soạn `qwen3_1.7b_vla_v5.yaml` — single-variable ablation thật so với v4
+Copy y hệt v4 (schedule/doc-packing/tokenizer/mọi weight nguồn khác), chỉ đổi finevideo: 2 shard `finevideo_w24` (drop_cosmos=0.85) → 5 shard `finevideo_w24_dropcosmos50` (drop_cosmos=0.5), tổng weight giữ nguyên 0.5550, chia theo tỷ trọng byte thật từng shard (không chia đều — tính bằng script, verify tổng ≈1.0). Verify toàn bộ 13 shard path resolve OK trước khi submit.
+
+### 4. User xác nhận "submit đi" — job `1041082` launch thật, 64 node
+Dùng đúng template chuẩn nhưng **tự sửa `OUTPUT_DIR`** giống lần v4 (template memory cũ vẫn ghi path `/e/project1/...` đã xoá — đổi đúng sang `/e/data1/.../nguyen38/output_vla`). Submit qua tmux (`v5_train`), RUNNING trong ~1 phút. Verify data pipeline dựng đúng 13 nguồn blend, không lỗi. Đặt Monitor nền (persistent) báo mỗi ~250 iteration + lỗi/hoàn tất — không cần user tự hỏi lại lần nào suốt phiên.
+
+**Tiến độ thật tại thời điểm ghi entry**: iter 1450/2642 (54.9%), loss giảm đều 50→7.97 ... 1450→3.09, tốc độ ổn định ~3.71-3.86s/iter (khớp sát v4). ETA hoàn thành **~08:48-09:00** (bắt đầu 06:01).
+
+### 5. Dọn nốt `/p/data1/mmlaion/shared/nguyen38/data/` (11.7TB) — verify kỹ trước khi xoá theo đúng yêu cầu user
+**Phát hiện quan trọng, tự sửa nhận định ban đầu**: đây KHÔNG phải mirror bị bỏ quên nhiều tháng như suy đoán lúc đầu — user xác nhận trực tiếp đây là backup thủ công lúc **JUPITER bảo trì**, tìm thấy đúng script `migrate_to_p.sh` xác nhận (rsync loại trừ `.tar`/`.zip`/env, từ `/e` sang `/p/data1/mmlaion/shared/nguyen38/data/`). Mtime "gần" (tới 21/07) là do `rsync -av` giữ nguyên mtime nguồn, không phải job ghi liên tục — verify bằng 19,076 file trong 1 thư mục con đều mtime dồn đúng 5 phút (bằng chứng 1 lần copy hàng loạt).
+
+**Phân biệt 2 vị trí khác nhau, quan trọng để không nhầm**: `/p/data1/mmlaion/nguyen38/` (không "shared") là workspace cá nhân **đang sống thật** (chứa `mv-scale/` — nơi các sbatch tokenize đang dùng), khác hẳn `/p/data1/mmlaion/shared/nguyen38/data/` (có "shared") — bản backup dữ liệu thuần, đúng mục tiêu cần dọn.
+
+**Verify checksum thật trước khi xoá** (không chỉ so kích thước): `output_vla/vla_25b_test/.../model.safetensors` (3.4GB) và 1 video mẫu `videos_staging/` — **MD5 khớp tuyệt đối cả 2 phía** → xác nhận `/e` là superset đầy đủ (giữ nguyên bản cũ trong `window8_legacy/` + có thêm mọi việc làm sau: Harmony4D, w24, tokenizer v2, reorg).
+
+**Phát hiện 1 ngoại lệ thật**: `nemotron/` (967G, tên trần — KHÁC `nemotron_base/`) không tồn tại ở bất kỳ đâu trên `/e` — không phải bản trùng, là bản DUY NHẤT còn lại, thuộc project khác không liên quan VLA (giống pattern `nemotron_base`/`output_v3`/`tokenized_output_project`). User xác nhận **giữ lại, không xoá**.
+
+**Đã xoá xong ~10.7TB** (`FineVideo-VLA` 6.2T, `outputs` 3.0T, `videos_staging` 632G, `nemotron_base` 384G, `tokenized_output_project` 328G, `output_v3` 145G, `output_vla` 96G, `vla_adaptive_tokenized` 11G, + 2 dir rỗng) qua tmux + Monitor nền, verify lại sau: chỉ còn đúng `nemotron/`, 0 lỗi trong log.
+
+### 6. Đọc paper AnyGPT (arXiv 2402.12226) theo yêu cầu trực tiếp của Huu ("read this paper")
+User đã tự thêm PDF vào `documents/`. Không render được ảnh (thiếu `pdftoppm`/poppler) — dùng `pypdf` (có sẵn) trích text thật trực tiếp từ PDF, đọc đủ phần Tokenization/Architecture/Data construction/Limitations, không dựa vào tóm tắt web (WebFetch trên URL abstract/pdf không cho đủ chi tiết kỹ thuật).
+
+**Map trực tiếp AnyGPT ↔ project**: backbone LLaMA-2 7B (họ) vs Qwen3 1.7B (mình, nhỏ hơn ~4x nhưng nhồi nhiều modal hơn — video+pose+audio+ảnh+text vs image+speech+music) · SEED/SpeechTokenizer/Encodec (vocab 8192/1024/8192) ↔ seed2/SNAC/cosmos · V=ΣVi (cộng vocab từng modal) ↔ đúng cách `expand_vocab.py` đã làm · 2 tầng semantic(LLM)/perceptual(decoder riêng) ↔ đúng cách seed2/cosmos/agent/snac + `decode_*.py` đã làm · **`<agent>` (pose/action) là phần project đi xa hơn AnyGPT — họ chưa từng làm modal action, không có precedent để đối chiếu thiết kế**.
+
+**Phát hiện cấu trúc quan trọng nhất**: AnyInstruct-108k (bộ hội thoại LLM tự tổng hợp, đa dạng ngữ cảnh dẫn vào từng modal, 108K sample/205K ảnh/503K voice/113K nhạc, GPT-4 sinh kịch bản → DALL-E-3/MusicGen/Azure-TTS convert thành nội dung thật) là **thứ project hoàn toàn chưa có** — đây chính là cách AnyGPT dạy model any-to-any switching, không phải qua kiến trúc. Đúng khớp 2 vấn đề đã chẩn đoán trước đó (Huu: "không follow instruction"; phát hiện riêng: "seed2/cosmos chỉ chuyển mode theo đúng 1 khuôn cố định").
+
+**Limitations họ tự báo cáo, liên quan trực tiếp tới project**: loss cao hơn train đơn-modal khi nhồi nhiều modal (gợi ý 1 phần "v3/v4 thua v2" có thể là chi phí cấu trúc do thêm modal/complexity lên model 1.7B nhỏ, không chỉ do data/dropout) · tokenizer quality là trần năng lực · context ngắn (nhạc giới hạn 5s, giống áp lực token-budget cosmos w24) · chưa có benchmark chuẩn any-to-any (giống việc phải tự viết `eval_vla_*_sanity.py` từ đầu).
+
+### 7. Thiết kế "VLA-Instruct" — adapt công thức AnyInstruct sang retrieval (không có model sinh video/pose từ text)
+Đề xuất kiến trúc: (1) LLM sinh kịch bản hội thoại đa dạng dạng text-placeholder (giống 100 meta-topic→20K topic của AnyGPT) → (2) **retrieval** (không generate) — dùng embedding caption có sẵn để tìm clip/pose-window/audio thật khớp ngữ nghĩa trong FineVideo/Harmony4D/DROID, thay placeholder bằng token thật đã tokenize. Đề xuất dùng như **SFT stage riêng sau pretrain** (đúng recipe AnyGPT: pretrain rồi mới instruction-tune), không trộn chung vào mix pretrain 64-node hiện tại — rẻ hơn, target đúng vào đúng vấn đề.
+
+**Khảo sát dataset permissive sẵn có phù hợp** (WebSearch + WebFetch, verify license thật):
+- **`IPEC-COMMUNITY/EO-Data1.5M`** (paper EO-1/EmbodiedOneVision, arXiv 2508.21112) — **Apache 2.0 sạch**, 1.5M sample, đúng format interleaved vision-language-action (hội thoại human/gpt + ảnh + action/state vector), 17 subset reasoning (affordance QA, failure detection, trajectory reasoning), từ **cùng nhóm IPEC-COMMUNITY làm DROID**. Không merge trực tiếp được (action-space robot khác `<agent>` người) nhưng là template format tốt nhất hiện có, và nếu sau này làm `<droid_agent>` thì gần như đi kèm sẵn.
+- `fnlp/AnyInstruct`/`OpenMOSS-Team/AnyInstruct` (chính bộ AnyGPT dùng) — **license KHÔNG ghi rõ trên trang HF** (rủi ro), sai modal (ảnh/speech/nhạc) — chỉ tham khảo format.
+- Interleave-VLA (dựng từ Open X-Embodiment, 210K episode/13M frame) — chưa verify license, nghi có cùng vấn đề license không đồng nhất như Open X-Embodiment/SenseNova.
+
+### Trạng thái cuối phiên — checklist resume
+1. Job train `1041082` (v5) — check `output_vla/qwen3_1.7b_vla_v5/current.log`, ETA ~08:48-09:00, Monitor nền vẫn chạy tại thời điểm ghi entry.
+2. So PPL cuối v5 vs v2(5.77)/v3(27.58)/v4(15.78) khi xong — quyết định giả thuyết "mật độ cosmos" đúng/sai.
+3. `_legacy_orphan/` (2.06TB, `/e`) — vẫn chưa xoá, chờ user xác nhận (không liên quan tới đợt dọn `/p` đã xong).
+4. `nemotron/` (967G, `/p`) — user muốn giữ lại, cân nhắc move sang `/e/alexandria/` cho gọn (chưa làm, chỉ mới đề xuất).
+5. `outputs/` (27 thư mục con, `/e`) — reorg đợt sau, vẫn chưa làm.
+6. VLA-Instruct (retrieval-based, SFT stage riêng) — mới dừng ở thiết kế, chưa code gì. Việc cụ thể nếu làm: build embedding index caption, viết script retrieval-substitute, quyết định LLM nào sinh kịch bản.
+7. `oellm-autoexp/config/experiments/nguyen38/qwen3_1.7b_vla_v5.yaml` (mới tạo) — cũng chưa commit, cùng lý do v4/các yaml khác (repo có nhiều thay đổi dở dang không liên quan).
+
+## Sampled-decode + temporal-continuity eval cho v4/v5 (25/07/2026, tiếp)
+
+User yêu cầu chạy 2 loại eval còn treo từ trước: sampled decoding (thay greedy) và test tính liên tục theo thời gian (nhiều chunk `<agent>`/`<cosmos>` liên tiếp) — cả hai đã bị hoãn từ phiên train v4/v5.
+
+### 1. Fix bug thật trong `eval_vla_v3_sanity.py` trước khi dùng cho v4/v5
+`classify_token()` thiếu rule cho `<speech>/</speech>` và `<snac>/</snac>` (bare, không wrapper) — 2 token atomic có thật trong `tokenizer_vla_qwen3_v2` (verify trực tiếp qua `tokenizer_config.json`, không suy đoán) nhưng bị rơi vào fallback regex và gắn nhãn sai "agent". Đây chính là nguyên nhân "false positive NEEDS REVIEW" đã ghi nhận cho v4 ở phiên trước. Đã sửa thêm 2 case vào rule "snac" — script này dùng chung cho v2/v3/v4/v5 nên fix áp dụng ngược cho mọi bản.
+
+### 2. Sampled sanity eval (T=0.8, top_p=0.9, rep_penalty=1.3, seed=42), 5 prompt thật giống bộ v3 cũ — chạy trực tiếp GPU login node, tmux, log `logs/eval_v{4,5}_sample_sanity.log`
+
+**Cả v4 và v5: agent-completion PASS thật** (mồi 3/17 khớp thật của record training → hoàn thành đúng 14 khớp còn lại, giá trị hợp lý, đúng t_0/t_23, đóng `</agent>` đúng). Script tự báo "ERROR: No `<fps_N>` token found" cho test này — xác nhận đây là **lỗi phương pháp có sẵn của bộ test, không phải lỗi model**: `<fps_30>` nằm trong phần PROMPT (đã cho sẵn), không phải phần model sinh ra, nên validate chỉ soát phần sinh ra sẽ luôn thấy 0 — false alarm áp dụng như nhau cho mọi model từng chạy test này (v2/v3/v4/v5), chỉ là trước đây bị bỏ qua vì đọc bằng mắt.
+
+**Khác biệt thật giữa v4 và v5, cùng 1 seed:**
+- `full_prompt_header` (mồi bằng header trần, không caption/seed2): **v4 KHÔNG tự dừng** — dùng hết cả 2000 token, tự bịa thêm nguyên 1 chu kỳ caption+seed2+cosmos thứ hai không được yêu cầu. **v5 tự dừng đúng lúc bằng `<|im_end|>` sau 188 token**, sau đúng 1 chu kỳ caption→seed2→listen→speech mạch lạc.
+- `listen_continuation` (mồi 5/15 snac thật): ngược lại — **v4 dừng sạch đúng lúc** (29 token, đúng `<|im_end|>` sau khi hoàn thành đủ snac). **v5 KHÔNG dừng**, dùng hết 400 token, lấn sang cả 1 block `<cosmos>` không được yêu cầu.
+  → Kết luận: hành vi "biết dừng đúng lúc" là **nhiễu theo prompt, không phải đặc điểm hệ thống của v4 hay v5** — mỗi model thắng 1 test, thua 1 test, không có xu hướng nhất quán.
+- `seed2_to_agent_from_scratch` (cho seed2 đầy đủ, không gì thêm — kỳ vọng tự mở `<agent>`): **cả v3, v4, v5 đều KHÔNG tự mở `<agent>`** — xác nhận lại phát hiện cũ, gap này chưa được data mới nào của v4/v5 sửa. Nhưng "sai" theo cách khác nhau mỗi lần: v3→mở `<listen>`, v4→mở `<listen>`, v5→mở `<cosmos>` — cho thấy việc chọn nhầm mode mang tính ngẫu nhiên theo sampling, không phải 1 lỗi cố định.
+- `image_caption_synth_llava` (seed2 ảnh tĩnh thật, kỳ vọng mở `<caption>`): **v4 mở đúng `<caption>`** (nội dung bịa sai chủ đề, sau đó lệch sang hội thoại Q&A giả kiểu OmniVideo — đúng pattern đã ghi ở REPORT.md §32) — tốt hơn v3 (v3 hoàn toàn không mở caption, đã ghi nhận là regression thật). **v5 sinh đúng 1 token rồi dừng ngay (`<|im_end|>`), không sinh caption nào cả** — tệ hơn cả v3 lẫn v4 ở test cụ thể này (mẫu nhỏ, 1 seed, không nên tổng quát hoá thành kết luận toàn cục, nhưng là số liệu thật cần ghi lại).
+
+### 3. Viết script mới `tools/eval/eval_temporal_continuity.py` — trả lời đúng câu hỏi "nhiều chunk liên tiếp có tiến triển hay chỉ lặp/đứng yên"
+Trước giờ chưa ai test: mồi model bằng **1 window/chunk THẬT duy nhất** (từ header thật + 1 `<agent>` hoặc `<cosmos>` block thật, lấy từ `flat_final_vla_adaptive_rank_126.jsonl` dòng 3 — có 3 window agent liên tiếp thật cùng 1 activity — và dòng 1 — có 8 chunk cosmos liên tiếp thật cùng 1 activity), rồi để model tự sampled-generate tiếp dài (3000-4000 token) và đo xem các block agent/cosmos MỚI mà model tự sinh ra có tiến triển thật hay đông cứng/lặp y hệt.
+
+**Baseline đối chứng từ chính data thật** (chạy scoring trên ground-truth block1/block2 của 2 record trên, không phải model sinh): cosmos thật giữa 2 chunk liên tiếp chỉ overlap ~9-12% vị trí token (thấp, đúng kỳ vọng "mỗi chunk là cảnh khác nhau") — nhưng phát hiện phụ bất ngờ: **2 window agent thật liên tiếp (block1→block2) của chính record này lại giống hệt nhau (identical trajectory)** — tức bản thân ground truth cũng có thể "đứng yên tuyệt đối" giữa 2 window thật (hợp lý nếu đúng đoạn đó nhân vật không di chuyển, bị lượng tử hoá về cùng 1 giá trị) — quan trọng để không vội kết luận "model đứng yên = bug" nếu chính data cũng vậy.
+
+**Kết quả thật trên v4/v5 (cùng seed=42, header+1 agent hoặc header+1 cosmos thật làm mồi):**
+
+| Test | v4 | v5 |
+|---|---|---|
+| Agent (mồi 1 window thật, kỳ vọng quay lại agent) | 0 block agent mới trong 3000 token — trôi qua `<listen>→<speech>→<seed2>→` rồi kẹt trong 1 khối `<cosmos>` khổng lồ dùng hết ngân sách, KHÔNG bao giờ quay lại `<agent>` | 0 block agent mới, nhưng dừng SẠCH chỉ sau 108 token (`<listen>→<speech>→<\|im_end\|>`) — không cố quay lại agent, chỉ đơn giản không có ý định |
+| Cosmos (mồi 1 chunk thật, kỳ vọng quay lại cosmos) | 0 chunk cosmos mới trong 4000 token — trôi qua `<listen>→<seed2>→<listen>→...` rồi tự phát sinh **1 block `<agent>` đầy đủ hợp lệ** (nhiều khớp, CP thích ứng đúng kiểu adaptive PCHIP) nhưng không bao giờ quay lại cosmos | **1 chunk cosmos mới, ĐẦY ĐỦ 896 token, 896 id khác nhau hết (không lặp), giá trị trải khắp vocab (532-63692)**, overlap 0% với chunk mồi (nội dung hoàn toàn mới) → verdict PROGRESSING, sau đó dừng sạch bằng `<\|im_end\|>` |
+
+**Kết luận thật, khác hẳn giả thuyết ban đầu:** không có bằng chứng "đông cứng/lặp y hệt" (macro-repetition kiểu greedy) ở CẢ v4 lẫn v5 dưới sampling — nhưng thay vào đó là 1 dạng lỗi khác, chưa từng ghi nhận trước đây: **"trôi mode" (modality drift) không quay lại** — mồi 1 modal thật, model chuyển dần sang modal khác và KHÔNG BAO GIỜ quay lại modal ban đầu trong ngân sách token đã thử, kể cả khi chính ground truth của activity đó THẬT SỰ quay lại (3 window agent liên tiếp, 8 chunk cosmos liên tiếp cùng 1 hoạt động). Điểm sáng duy nhất: **v5 quay lại cosmos được 1 lần** (v4 thì không, ở cả 2 hướng test) — số liệu quá nhỏ (n=1 seed/model) để kết luận v5 "tốt hơn" tổng quát, nhưng là quan sát thật đáng ghi lại.
+
+**Việc tồn đọng:** test này mới thử 1 seed/model — nên chạy thêm vài seed khác + ngân sách token lớn hơn (>4000) trước khi kết luận chắc "model không bao giờ duy trì 1 modal đủ lâu"; cũng chưa thử decode video thật từ chunk cosmos mới của v5 để đánh giá chất lượng nội dung (chỉ mới xác nhận đúng định dạng kỹ thuật 896 token/vocab hợp lệ).
+
+Output đầy đủ: `samples/qwen3_1.7b_vla_v4_eval/temporal_continuity/`, `samples/qwen3_1.7b_vla_v5_eval/temporal_continuity/` (JSON + raw token text). Script mới: `tools/eval/eval_temporal_continuity.py`.
+
+## Đa-seed + đối chứng v2 (window=8) + text-to-media thật cho v3/v4/v5 — trả lời câu hỏi "window=24 có phải nguyên nhân?" (25/07/2026, tiếp)
+
+User yêu cầu: (1) chạy thêm seed để confirm "modality drift", (2) chốt v3/v4/v5 fail hay không, quan trọng nhất là **có phải do window=24** và **snac listen/speak hoạt động ra sao**, (3) sau đó yêu cầu thêm: text→media thật (không chỉ continuation từ token thật) cho cả 3 version.
+
+### 1. Đa-seed (thêm seed 7/123/2024, tổng 4 seed mỗi model) — bác bỏ kết luận "trôi mode, không bao giờ quay lại" ở seed=42 ban đầu
+Kết quả seed=42 (trôi mode tuyệt đối, không quay lại) **KHÔNG đại diện** — là hiện tượng xác suất theo seed, không phải luôn luôn:
+
+| Seed | v4 agent | v4 cosmos | v5 agent | v5 cosmos |
+|---|---|---|---|---|
+| 42 | ✗ | ✗ | ✗ | ✓ |
+| 7 | ✓ (dở dang, cắt giữa chừng) | ✗ | ✗ | ✓ |
+| 123 | ✗ | ✗ | ✗ | ✓ |
+| 2024 | ✓ (dở dang) | ✓ (hoàn chỉnh 896/896 + 1 chunk dở dang thứ 2) | ✗ | ✓ |
+
+**v5: quay lại cosmos ổn định 4/4 seed** nhưng **0/4 quay lại agent**. **v4: ngược lại tương đối** — 2/4 quay lại agent (dù thường dở dang do hết ngân sách token trước khi đóng `</agent>`), chỉ 1/4 quay lại cosmos hoàn chỉnh. Không model nào quay lại đều cả 2 chiều.
+
+### 2. Đối chứng v2 (window=8, `<snac>` trần không có listen/speak wrapper) — bằng chứng thật cho câu hỏi "window=24 có phải nguyên nhân"
+Tìm được record thật window=8 (`megatron_dataset_v6/flat_final_vla_adaptive_rank_0.jsonl`: dòng 12 có 8 window agent liên tiếp, dòng 0 có 15 chunk cosmos liên tiếp cùng 1 hoạt động — xác nhận **v2 dùng nguồn `finevideo_v6`/`megatron_dataset_v6`, KHÔNG PHẢI `megatron_dataset_adaptive`** như bảng path cũ trong CLAUDE.md dễ gây nhầm — đã verify trực tiếp qua `qwen3_1.7b_vla_v2.yaml`'s `data_path`).
+
+**Bug môi trường thật tìm thấy khi load tokenizer v2**: `tokenizer_vla_qwen3/tokenizer_config.json` có field `extra_special_tokens` lưu dạng **list cũ**, nhưng bản `transformers` hiện tại trong `env_stable_vla` yêu cầu **dict** → `AttributeError` khi load. Đây là lỗi thật, có nghĩa là **`eval_vla_v2_sanity.py` cũng sẽ crash nếu chạy lại ngay bây giờ trong cùng env** (không ai phát hiện ra vì không ai rerun nó gần đây). Fix an toàn: patch 1 bản copy tạm (`extra_special_tokens: {}`), không đụng file gốc trên `/e/data1` — cần áp dụng fix tương tự nếu muốn chạy lại bất kỳ script eval nào của v2 trong tương lai.
+
+**Lưu ý quan trọng về độ tin cậy**: record agent test có header dài 30,147 ký tự (~4935 token) — **vượt quá max context 4096 của v2** (v2 train với `seq_length=4096`, khác hẳn 16384 của v3/v4/v5) → generation in ra warning "exceeded predefined maximum length". Kết quả test agent của v2 vì vậy có thể bị ảnh hưởng bởi tràn context — không hoàn toàn sạch. Test cosmos dùng record khác, header chỉ 1029 ký tự (~590 token), nằm gọn trong context — **kết quả cosmos của v2 đáng tin cậy 100%**.
+
+**Kết quả 4 seed (42/7/123/2024):**
+| | v2 (w8) | v4 (w24) | v5 (w24) |
+|---|---|---|---|
+| Cosmos quay lại | **4/4**, seed=42 còn quay lại được **2 chunk hoàn chỉnh liên tiếp + 1 chunk dở dang thứ 3** (chuỗi nhiều chunk, giống thật) | 1/4 hoàn chỉnh | 4/4 (nhưng chỉ 1 chunk/seed, chưa thấy chuỗi nhiều chunk như v2) |
+| Agent quay lại | 0/4 "INSUFFICIENT" (luôn sinh ra gì đó — 2/4 PROGRESSING, 2/4 STATIC) — **có lưu ý tràn context** | 2/4 PROGRESSING (dở dang), 2/4 INSUFFICIENT | 0/4 PROGRESSING, 4/4 INSUFFICIENT |
+
+**Kết luận (thận trọng, có giới hạn):** v2 (window=8) rõ ràng bền vững hơn ở khả năng "duy trì/quay lại 1 modal theo thời gian" so với cả v4 lẫn v5 — đặc biệt ở cosmos (chuỗi nhiều chunk liên tiếp thật chỉ thấy ở v2). Đây là bằng chứng THEO HƯỚNG "window=24 (hoặc các thay đổi đi kèm nó) làm tệ đi", nhưng **CHƯA đủ để kết luận chắc chắn window=24 tự nó là nguyên nhân duy nhất** — giữa v2 và v3/v4/v5 có QUÁ NHIỀU biến đổi cùng lúc (window size, cosmos token cost 200→896, listen/speak wrapper, mix 6 nguồn, Harmony4D oversample, drop_cosmos dropout, corpus size) chưa từng được cô lập từng biến một (đúng như lo ngại đã ghi ở entry trước "simultaneous distribution shift... never isolated"). Phát hiện phụ đáng chú ý: ablation `drop_cosmos` 0.85→0.5 (v4→v5) KHÔNG cải thiện PPL tổng thể (đã biết) nhưng **CÓ cải thiện rõ khả năng quay lại cosmos** (1/4→4/4) — gợi ý mật độ cosmos-dropout ảnh hưởng tới "tính liên tục theo thời gian" theo cách khác với ảnh hưởng lên loss tổng, 2 hiện tượng độc lập.
+
+### 3. Snac listen/speak — hoạt động cơ học ĐÚNG, không phải nơi gây lỗi
+Xuyên suốt mọi test (sampled sanity, temporal continuity, text-to-media) ở cả v3/v4/v5: khối `<listen>...</listen>` luôn mở/đóng đúng, số lượng token là bội số 3 hợp lệ, giá trị `<snac_N>` luôn nằm trong dải band đã đăng ký, decode ra `.wav` thành công 100% số lần thử. `<speech>` (token cũ, v2-style) và `<speak>` (mới) đều có trong vocab v3+ và thỉnh thoảng được model chọn (không phải bug, đều là token hợp lệ trong `tokenizer_config.json`, đã verify). Ở v2 (`<snac>` trần, không wrapper) cũng decode sạch 100%. **Kết luận: snac listen/speak KHÔNG phải nguyên nhân của bất kỳ lỗi nào đã thấy** — đây là phần hoạt động tốt nhất, ổn định qua mọi version; vấn đề thật nằm ở tầng "model có quay lại/duy trì đúng modal theo thời gian hay không" và "nội dung có đúng ngữ nghĩa với prompt hay không", không phải ở định dạng token audio.
+
+### 4. Text→media thật (không phải continuation) — prompt hoàn toàn mới "Rooftop workout at sunset... jumping jacks", cùng seed=7, cả v3/v4/v5
+Viết lại `gen_full_chain_v3.py` thành generic (nhận `--model-path`/`--tokenizer-path`), sửa luôn phần decode cosmos dùng `_grid_for()` tự nhận diện thay vì hardcode 200 token (đã fix hôm qua nhưng script demo này quên cập nhật theo).
+
+| | v3 | v4 | v5 |
+|---|---|---|---|
+| Chuỗi modal tự sinh | caption→seed2→listen→cosmos→agent→listen→seed2 (đủ cả 5 loại) | caption→seed2→listen→cosmos→agent→listen (đủ cả 5 loại) | caption→seed2→listen→cosmos→listen (**thiếu agent**) |
+| Caption tự viết | "The person is riding an ice rink to catch it from left" — sai hoàn toàn chủ đề | "The person is not visible in the image" — từ chối/né tránh mô tả | "The person is standing in front of an open window with their arms outstretched" — sai chi tiết nhưng "arms outstretched" ít nhất liên quan xa tới tư thế jumping-jack, có vẻ khá nhất trong 3 |
+| Cosmos decode | Lần đầu decode được (fix `_grid_for` mới), 896 token | Decode được | Decode được |
+| Agent | 1 window, chuyển động thật (~0.2m) | 1 window, chuyển động nhỏ hơn (~0.067m) | không có |
+
+**Cả 3 version đều KHÔNG follow đúng chủ đề prompt** — xác nhận thêm 1 lần nữa: gap "not follow instruction" (Huu đã chỉ ra từ v2) **hoàn toàn không đổi qua v3→v4→v5**, vì không version nào thêm data instruction/reasoning mới, chỉ đổi window/mix/dropout. Đúng đề xuất VLA-Instruct trong `project_anygpt_vla_instruct.md` — đây mới là lever thật sự cần, không phải điều chỉnh tiếp window/dropout/mix.
+
+Đã gửi 4 file (ảnh/video/audio/pose) mỗi version cho user, cộng 1 video pose động render thêm cho v3/v4 (script gốc chỉ có ảnh tĩnh 2 khung, đã bổ sung gọi `render_agent_pose.py` để có video đầy đủ).
+
+### Verdict tổng kết
+- **v3: FAIL rõ ràng** so với v2 — PPL tệ nhất (27.58 vs 5.77), caption sai hoàn toàn, cosmos trước đây còn không decode được (tooling gap, nay đã fix).
+- **v4: FAIL nhưng có cải thiện cục bộ** — PPL đỡ hơn v3 (15.78, nhờ train nhiều bước hơn, không phải nhờ sửa đúng nguyên nhân gốc), quay lại agent tốt hơn v5 nhưng quay lại cosmos kém.
+- **v5: FAIL, đánh đổi 1-1** — PPL không đổi so với v4 (16.75, xác nhận lại ablation drop_cosmos không sửa PPL), nhưng quay lại cosmos rất tốt (4/4, tốt nhất trong 3 bản w24) đổi lại mất hẳn khả năng quay lại agent (0/4).
+- **Không bản nào trong v3/v4/v5 vượt qua v2** ở bất kỳ chỉ số nào đo được hôm nay (PPL, độ bền modal theo thời gian, hay tính đúng ngữ nghĩa của caption). Gap "not follow instruction" giống hệt nhau ở cả 4 version — không phải thứ sửa được bằng cách chỉnh window/mix/dropout tiếp.
+- **Hàm ý cho việc đổi hướng**: dữ liệu hôm nay ủng hộ trực tiếp việc **dừng lặp lại vòng "chỉnh 1 biến pretraining rồi train lại"** (đã thử window, dropout, epoch, doc-packing — không cái nào đưa v3/v4/v5 vượt qua v2) và **chuyển sang lever khác hẳn**: thêm data instruction/reasoning thật (hướng VLA-Instruct đã đề xuất) — đây là biến duy nhất chưa từng được thử trong toàn bộ chuỗi v3→v5.
+
+**Việc tồn đọng**: chưa có ablation cô lập RIÊNG biến window=8 vs window=24 (giữ nguyên mọi thứ khác) — nếu muốn kết luận chắc chắn "window=24 tự nó là thủ phạm" cần 1 lần train riêng chỉ đổi đúng biến này, hiện tại bằng chứng chỉ ở mức "cả gói v3/v4/v5 thua v2", chưa tách bạch được đóng góp của từng thay đổi.
+
+### 5. Text→media với prompt thứ 2, đơn giản hơn ("Morning run in the park: A person is running in a park.") — theo yêu cầu user (prompt "Rooftop workout" trước bị chê phức tạp khó đọc kết quả)
+
+**Bug thật gặp phải lần chạy đầu**: truyền `\n` qua biến bash trong lệnh `tmux new-session` không được hiểu là xuống dòng thật (chỉ là 2 ký tự `\`+`n` literal) — khiến prompt model nhận được sai định dạng train-time (`### Title: ...\n### Context: ...` dính liền 1 dòng thay vì 2 dòng thật). Phát hiện bằng cách in lại `Prompt:` trong log và so với header thật. Fix bằng cách ghi prompt ra file thật (`cat` lại qua `$(...)`) thay vì nhúng `\n` trực tiếp trong chuỗi bash.
+
+**Kết quả (seed=7, cùng điều kiện với prompt "Rooftop workout"):**
+| | v3 | v4 | v5 |
+|---|---|---|---|
+| Chuỗi modal | caption→seed2→listen→speak→caption→listen (KHÔNG có cosmos/agent lần này) | caption→seed2→**agent**→listen→cosmos→**agent** (2 block agent!) | caption→seed2→listen→caption→seed2→**agent**→listen→seed2→cosmos |
+| Caption tự viết | "The man on the left is wearing glasses and appears to be working out by his phone" — sai chủ đề, nhưng có ý "tập luyện" | **"The man is walking down a narrow road with his hand near something on it"** — GẦN chủ đề nhất trong toàn bộ test hôm nay (đúng ý "người + di chuyển trên đường"), dù vẫn là "walking" không phải "running" và bịa thêm chi tiết thừa | "The person is taking a picture of two men standing next to a fence at night" — sai hoàn toàn chủ đề |
+| Agent có sinh? | Không | Có (2 block) | Có (1 block) |
+
+**Nhận xét quan trọng**: kết quả rất nhạy với modal nào ngẫu nhiên xuất hiện ở lần chạy đó (v3 không có agent lần này dù có ở prompt trước; v5 CÓ agent lần này dù KHÔNG có ở prompt "Rooftop workout") — xác nhận thêm 1 lần nữa tính "trôi mode" ngẫu nhiên theo seed/prompt đã ghi ở mục 1. **v4 cho caption gần đúng chủ đề nhất trong tất cả các lần test text→media đã chạy** (cả 2 prompt, cả 3 version, tổng 6 lần) — 1 điểm dữ liệu tích cực nhỏ cho v4, nhưng vẫn chỉ là "gần đúng 1 phần" (walking vs running), không phải bằng chứng đã giải quyết được gap "not follow instruction".
+
+Đã gửi đủ file (ảnh/video/audio, + video pose động nếu có agent) cho cả 3 version, 2 prompt (tổng 6 bộ) cho user.
+
+### Verdict tổng kết (bổ sung sau khi có cả 2 prompt)
+Giữ nguyên verdict ở mục 4 — 6 lần test text→media (2 prompt × 3 version) đều cho thấy **caption sai chủ đề toàn bộ hoặc gần đúng nhất 1 phần nhỏ (v4/walking)**, không có lần nào caption đúng ý prompt gốc. Việc modal nào xuất hiện (agent/cosmos có hay không) dao động mạnh theo seed/prompt, không phải đặc điểm cố định của version. Càng củng cố thêm kết luận: **vấn đề cốt lõi là thiếu data instruction/reasoning đa dạng để dạy model "điều kiện hoá đúng theo text mới lạ"**, không phải thứ có thể sửa bằng cách đổi tiếp window/mix/dropout trên cùng recipe pretraining hiện tại.
+
+## Hoàn tất consolidate w8_new, tự phát hiện+sửa bug harmony4d compound, launch 3 job seq_length ablation (26/07/2026)
+
+### 1. Job tokenize `14143465` (omnivideo_100k_w8, JUWELS) — user tự submit, COMPLETED sạch
+2086s (~34.8 phút), 5,214/5,214 document, 0 lỗi thật, output 7.37GB (1 shard, dưới ngưỡng sharding 10GB). Cả 6 nguồn của mix w8_new giờ đã tokenize xong.
+
+### 2. Consolidate toàn bộ w8_new sang `/e` (container training chỉ bind `/e`, không thấy `/p`)
+- `tokenized/`: copy thật 3 shard mới (finevideo_v6_listen 41GB + harmony4d_w8 1.2GB + omnivideo_100k_w8 7.4GB = 52.89GB) từ `/p` sang `/e/w8_new/tokenized/`, verify byte-identical (size + file count khớp tuyệt đối 2 phía). 3 nguồn không đổi (mv_omni/synth_llava/roleplay_speak) chỉ **symlink**, không copy — tránh trùng ~77GB dữ liệu byte-identical với bản đã có ở `window8_legacy/`/`window24_current/`.
+- User hỏi lại "đã copy/moved bản flatten trước chưa" — phát hiện thiếu: `flatten/` (pre-tokenize, 4 nguồn còn lại chưa đưa vào `w8_new/`, ~105GB: finevideo_v6_flat_listen 74GB + mv_omni_converted 30GB + synth_llava_flat 547MB + roleplay_speak flat 756MB). Copy nốt, verify EXIT=0 cả 4.
+
+### 3. Viết config training v6, submit lần đầu (`1046000`), user chặn kịp lúc
+Đo token thật qua `.idx` header cho cả 6 nguồn (không dùng ước tính) — verify `mv_omni`/`synth_llava` khớp tuyệt đối số của v2 (chứng minh retokenize bằng vocab mới `tokenizer_vla_qwen3_v2` không đổi nội dung). Viết `qwen3_1.7b_vla_v6.yaml` copy kiến trúc v2 (`seq_length=4096`, không doc-packing), rebalance 60/40 (action/non-action) như v2, cộng thêm harmony4d vào bucket action. Submit job `1046000` (64 node) — **user chặn ngay: "đừng submit vội, tôi tưởng chốt tăng seqlength?"**. `scancel` kịp thời (job mới RUNNING ~1 phút, chưa checkpoint nào).
+
+### 4. Đo document-length thật từ `.idx` để trả lời câu hỏi seq_length — không ước tính
+Đọc trực tiếp per-document token length từ sequence-lengths array trong `.idx` (ground truth, không phải ước tính word-count có gap ~2x đã biết). Phát hiện quan trọng: **`omnivideo_100k_w8` mỗi document = 1 video nguyên** (median 361,690 token, khác hẳn FineVideo per-activity median 11,569) — không seq_length thực tế nào (4096-16384) fit trọn nổi nguồn này. Coverage token-weighted: 3.2%/23.5%/32.3% ở 4096/8192/16384 — gradient thật nhưng không đột biến, và bằng chứng thật 25/07 (v2 seq=4096 thắng v3-v5 seq=16384 dù coverage kém hơn) khiến "coverage cao hơn = tốt hơn" không chắc đúng ở đây.
+
+### 5. Phát hiện + sửa bug thật: harmony4d oversample bị compound ngoài ý muốn
+User hỏi thêm "harmony4d nên oversample bao nhiêu" — verify trực tiếp code `Megatron-LM/megatron/core/datasets/gpt_dataset.py` (`_get_num_epochs`): khi 1 nguồn trong blend cần nhiều sample hơn nó có sẵn (do weight cao), Megatron **tự động lặp lại nội bộ** để đủ ngân sách. Bucket action (60% target, chỉ có 39.08% content thật) khiến TOÀN BỘ bucket (không riêng harmony4d) bị nhân thêm ~1.535x ngoài ý định ban đầu.
+
+Ban đầu định giải bằng cách retokenize harmony4d ở oversample 13x (bù trừ 1.535x để giữ đúng ~20x hiệu quả gốc) — **user chỉ ra đúng: không cần retokenize gì cả**, chỉ cần sửa weight trong config: cho harmony4d 1 weight riêng (= đúng % content vật lý nó có, không theo công thức tỷ lệ bucket) → Megatron chỉ cần 1 pass, không tự nhân thêm → đúng 20x hiệu quả, không tốn compute retokenize. Đây là fix config-only, không đụng tới file/tokenize đã có.
+
+### 6. Viết lại 3 config (không phải 1) theo yêu cầu user "submit 3 job luôn, sợ gì"
+Thay vì tự chọn 1 seq_length, launch song song 3 biến thể `qwen3_1.7b_vla_v6_seq{4096,8192,16384}.yaml` — cùng data mix/weight (đã fix harmony4d), chỉ khác `seq_length`/`micro_batch_size` (4/2/1 — 4 và 1 đã proven an toàn từ v2/v3, 2 là suy ra nội suy chưa test thật, cần theo dõi OOM)/`train_iters`/`warmup`/`wsd_decay`. Không bật doc-packing ở cả 3 (ablation `v3_docpacked` trước đã bác bỏ). Verify cả 3 file: 17 shard/file, 0 path miss, weight sum 1.0001.
+
+### 7. Sự cố khi submit: double-submit, phát hiện + sửa kịp thời
+Submit 3 tmux session gần như đồng thời (cách nhau 2s) → ra **5 job SLURM thật** thay vì 3 (`seq4096` và `seq8192` mỗi cái bị submit 2 lần, cùng ghi vào 1 `output_dir` — rủi ro corrupt checkpoint nếu để lâu). Nguyên nhân chưa xác định chắc chắn (có thể race trong `run_autoexp.py` khi 3 process gọi gần như cùng lúc). Phát hiện ngay qua `squeue` đếm job (5 ≠ 3 config), verify qua `config-<jobid>.yaml` của từng job để biết đúng 2 job nào là bản trùng, `scancel` kịp thời (~2 phút sau khi RUNNING, chưa checkpoint nào).
+
+**Trạng thái cuối phiên**: 3 job thật đang chạy, 1 job/config, 64 node/job (192 node tổng):
+- `1046012` — `qwen3_1.7b_vla_v6_seq4096`
+- `1046010` — `qwen3_1.7b_vla_v6_seq8192`
+- `1046014` — `qwen3_1.7b_vla_v6_seq16384`
+
+## 3 job seq_length ablation COMPLETED, eval đầy đủ cho cả 3 (sanity + temporal-continuity + full-chain), so sánh với v2/v4/v5 (26/07/2026, tiếp)
+
+### 1. Verify qua `sacct` — cả 3 job thật đều COMPLETED sạch, không phải job double-submit đã bị cancel
+`1046012` (seq4096, 8065 iter, 2:28:55), `1046010` (seq8192, 4033 iter, 2:13:03), `1046014` (seq16384, 2016 iter, 2:18:51) — cả 3 exit code 0:0. `1046011`/`1046013` (2 job trùng của sự cố double-submit) đúng như dự đoán, CANCELLED sau ~2 phút, 0 checkpoint.
+
+**Bug thật phát hiện khi verify**: symlink `current.log` của **2/3 thư mục output** (`seq4096`, `seq8192`) trỏ **sai** — về đúng job bị `scancel` (`1046013`/`1046011`) chứ không phải job thật chạy xong (`1046012`/`1046010`). Nếu chỉ đọc `current.log` sẽ tưởng nhầm 2 training này thất bại ("CANCELLED... iteration 50"). Nguyên nhân: cả 2 job (gốc + trùng) cùng ghi vào 1 `output_dir`, symlink được job nào chạy xong TRƯỚC (ở đây là bản bị cancel, dừng sớm) ghi đè sau cùng. File log thật (`slurm-<jobid>.log` theo đúng jobid từ `sacct`) vẫn đầy đủ, không mất gì. `seq16384` không bị double-submit nên symlink đúng.
+
+### 2. Test PPL thật (đọc trực tiếp log, không phải current.log)
+| | v2 | v3 | v4 | v5 | v6-seq4096 | v6-seq8192 | v6-seq16384 |
+|---|---|---|---|---|---|---|---|
+| Test PPL | **5.77** | 27.58 | 15.78 | 16.75 | 6.36 | **5.98** | 6.12 |
+
+Cả 3 bản v6 áp sát v2, bỏ xa v3/v4/v5 (chênh 2.5-4.6x) — xác nhận mạnh thêm kết luận 25/07: vấn đề của v3/v4/v5 không phải window=24 tự thân mà là tổ hợp mix/dropout/token-cost đổi đồng thời. Mix w8_new (rebuild lại theo kiến trúc v2 + thêm Harmony4D/listen/roleplay_speak) phục hồi gần hết PPL.
+
+### 3. Viết `tools/eval/eval_vla_v6_sanity.py` mới — không tái dùng nguyên `eval_vla_v3_sanity.py`
+Lý do: v6 là kiến trúc **window=8** (giống v2), còn `eval_vla_v3_sanity.py` mồi bằng record thật window=24 (Darth Maul, t lên tới 23) — nếu dùng nguyên sẽ test nhầm thứ model w8 chưa từng học (test generalization sang window size lạ, không phải test đúng cái model được train). Script mới mồi bằng 1 record thật window=8 từ chính nguồn `w8_new/flatten/finevideo_v6_listen/finevideo_v6_flat_listen/flat_final_vla_adaptive_rank_11.jsonl` dòng 206 (bài giảng "Explaining the Concave Mirror", có đủ caption+seed2+agent(t_0-7)+listen+speech), giữ nguyên cấu trúc 5 test như bản v3 (chỉ đổi t_23→t_7 trong validate). Atomicity test giữ nguyên (cùng tokenizer `tokenizer_vla_qwen3_v2`).
+
+Tìm thêm 2 record thật cho temporal-continuity (script cũ đã hỗ trợ sẵn `--agent-record-file/--agent-line/--cosmos-record-file/--cosmos-line` để trỏ nguồn khác) bằng cách quét toàn bộ `finevideo_v6_flat_listen` tìm cụm block liên tiếp cùng hoạt động (không có `### Title:` xen giữa): `rank_0.jsonl` dòng 932 (5 window agent liên tiếp) và dòng 399 (16 chunk cosmos liên tiếp).
+
+### 4. Chạy eval đầy đủ cho cả 3 model (sanity sampled + temporal-continuity + full-chain simple prompt), tuần tự qua tmux + Monitor nền, log vào `samples/qwen3_1.7b_vla_v6_{seq4096,seq8192,seq16384}_eval/`
+
+**Sanity (sampled, seed=42)**: token atomicity cả 3 PASS. Generation: seq4096 PASS, seq8192/seq16384 "NEEDS REVIEW" — phần lớn do lỗi phương pháp đã biết từ 25/07 (`<fps_N>` nằm trong phần mồi/prompt chứ không phải phần model sinh ra → false alarm ở test agent_continuation), không hẳn là bug thật của model, nhưng riêng test `full_prompt_header` (mồi chỉ có header, không có gì mồi sẵn) của seq8192 KHÔNG bao giờ mở `<agent>` trong 2000 token (trôi giữa cosmos/listen/seed2 liên tục) — đây là phát hiện thật, khớp gap "not follow instruction/không tự mở agent" đã ghi nhận từ trước.
+
+**Temporal continuity (seed=42 — chỉ 1 seed, so với 4 seed của v2/v4/v5, số liệu dưới đây mới ở mức chỉ dấu sớm, chưa đủ mạnh để kết luận chắc)**:
+
+| | v2 (w8, 4 seed) | v4 (w24, 4 seed) | v5 (w24, 4 seed) | v6-seq4096 (1 seed) | v6-seq8192 (1 seed) | v6-seq16384 (1 seed) |
+|---|---|---|---|---|---|---|
+| Agent quay lại | 0/4 INSUFFICIENT (2/4 PROGRESSING dở dang, có lưu ý tràn context) | 2/4 PROGRESSING (dở dang) | 0/4 PROGRESSING (4/4 INSUFFICIENT) | **4 block liên tiếp, PROGRESSING, không đông cứng** | 2 block liên tiếp, PROGRESSING | 0 block (INSUFFICIENT) |
+| Cosmos quay lại | 4/4 (seed42: 2 chunk hoàn chỉnh + 1 dở dang) | 1/4 hoàn chỉnh | 4/4 (chỉ 1 chunk/seed) | 1 block, PROGRESSING | **3 block liên tiếp**, PROGRESSING | 1 block, PROGRESSING |
+
+**Phát hiện đáng chú ý nhất phiên này**: seed=42 của `v6-seq4096` là lần đầu tiên trong toàn bộ chuỗi v2→v6 thấy model tự quay lại `<agent>` **4 lần liên tiếp, đều hoàn chỉnh/gần hoàn chỉnh, không đông cứng** (cross-window displacement 0.05→0.14→0.15→0.35m, không có cặp nào `frozen_vs_prev=True`) — trước đây (v2/v4/v5) tối đa chỉ 2/4 seed và luôn dở dang. Cần chạy thêm 3 seed nữa (7/123/2024, đúng bộ seed đã dùng cho v2/v4/v5) trước khi kết luận chắc "w8_new sửa được modality drift" thay vì chỉ là may mắn theo seed.
+
+**Full-chain, prompt đơn giản** (`### Title: Morning run in the park\n### Context: A person is running in a park.\n`, seed=7 — v2 chưa từng chạy test này):
+
+| | seq4096 | seq8192 | seq16384 |
+|---|---|---|---|
+| Chuỗi modal | caption→seed2→listen→cosmos→listen×3→seed2→cosmos→listen×3 (13 block, không có agent) | caption→seed2→listen→cosmos→**agent**→listen→cosmos (đủ cả 5 loại) | caption→seed2→listen×3→caption (dừng sớm, thiếu cosmos/agent) |
+| Caption tự viết | "riding on top of an airplane" — sai chủ đề | "riding on an orange and black slide" — sai chủ đề | "riding on an inflatable raft down a street" — sai chủ đề |
+| Decode thành công | ảnh+audio+video (không agent) | **đủ cả ảnh+audio+video+pose**, agent_pose_skeleton.png render được | chỉ ảnh+audio |
+
+Gap "không theo đúng chủ đề prompt" (Huu chỉ ra từ v2, y nguyên qua v3→v4→v5) **vẫn y nguyên ở cả 3 bản v6** — đúng dự đoán 25/07, vì không version nào (kể cả v6) thêm data instruction/reasoning mới, chỉ đổi mix/kiến trúc pretrain.
+
+### Kết luận phiên này
+- **v6 (đặc biệt seq4096/seq8192) là bản tốt nhất kể từ v2** trên cả PPL lẫn khả năng duy trì modal theo thời gian — vượt hẳn v3/v4/v5. Xác nhận hướng "rebuild lại theo kiến trúc v2 + thêm data mới" đúng hơn hẳn so với tiếp tục chỉnh window/dropout trên nền v3.
+- **seq16384 yếu nhất trong 3 bản v6** trên mọi trục đo được (PPL 6.12 cao nhất, 0 block agent quay lại, full-chain thiếu cosmos/agent) — nghi do train ít iteration nhất (2016 vs 4033/8065 — cùng ~33.8B token nhưng seq dài hơn → ít iteration hơn ở cùng global batch size), chưa tách bạch được có phải do bản thân seq_length hay do số iteration.
+- **seq8192 có vẻ cân bằng nhất** hiện tại: PPL tốt nhất (5.98), đủ 5 modal trong full-chain, cosmos-continuity tốt (3 block liên tiếp).
+- **Gap instruction-following vẫn chưa ai chạm tới** — không version nào cải thiện, củng cố thêm đề xuất VLA-Instruct là lever thật sự cần làm tiếp, không phải tiếp tục chỉnh seq_length/mix pretrain.
+
+### Trạng thái cuối phiên — checklist resume
+1. Temporal-continuity của v6 mới chạy 1 seed (42) — nên chạy thêm seed 7/123/2024 (đúng bộ đã dùng cho v2/v4/v5) trước khi kết luận chắc "seq4096 sửa được modality drift", nhất là để xác nhận lại kết quả 4/4 block agent liên tiếp của seq4096 không phải may mắn theo seed.
+2. Chưa quyết định chọn seq_length nào để đi tiếp — seq8192 đang nhỉnh nhất nhưng cách biệt PPL với seq4096/seq16384 nhỏ (5.98 vs 6.12/6.36), 1 seed/config chưa đủ mạnh.
+3. `current.log` sai symlink ở `output_vla/qwen3_1.7b_vla_v6_seq{4096,8192}/` — nên trỏ lại đúng job thật (`slurm-1046012.log`/`slurm-1046010.log`) nếu có script nào tự động đọc log theo path `current.log` sau này.
+4. `_legacy_orphan/` (2.06TB, `/e`) — vẫn chưa xoá, chờ user xác nhận (tồn đọng nhiều phiên).
+5. VLA-Instruct (retrieval-based, SFT stage riêng) — vẫn mới dừng ở thiết kế, chưa code gì.
+6. `oellm-autoexp/config/experiments/nguyen38/qwen3_1.7b_vla_v6_seq{4096,8192,16384}.yaml` (3 file) — chưa commit, cùng lý do các phiên trước (repo `oellm-autoexp` có nhiều thay đổi dở dang không liên quan).
+
+**Việc tồn đọng**: theo dõi cả 3 job (đặc biệt seq8192 với `micro_batch_size=2` chưa test thật, coi chừng OOM những iteration đầu); khi xong cả 3, chạy lại đúng bộ eval đã dùng cho v3/v4/v5 (PPL, sampled-decode sanity, temporal-continuity, text→media) để trả lời 2 câu hỏi: (a) kiến trúc v2 + data mới có thắng v2 gốc (PPL 5.77) không, (b) seq_length nào đúng cho window=8.

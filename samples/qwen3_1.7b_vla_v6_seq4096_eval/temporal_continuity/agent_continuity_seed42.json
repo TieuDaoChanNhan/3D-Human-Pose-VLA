@@ -1,0 +1,58 @@
+{
+  "seed": 42,
+  "prompt_len_tokens": 722,
+  "primed_block": {
+    "source": "primed_real_block0",
+    "decode_error": null,
+    "n_tokens": 277
+  },
+  "n_new_blocks": 4,
+  "results": [
+    {
+      "window_index": 0,
+      "n_tokens": 601,
+      "complete": true,
+      "decode_error": null,
+      "n_frames": 8,
+      "mean_within_window_motion_m": 0.1425,
+      "cross_window_disp_m": 0.05,
+      "frozen_vs_prev": false,
+      "verdict": "PROGRESSING"
+    },
+    {
+      "window_index": 1,
+      "n_tokens": 601,
+      "complete": true,
+      "decode_error": null,
+      "n_frames": 8,
+      "mean_within_window_motion_m": 0.1498,
+      "cross_window_disp_m": 0.1419,
+      "frozen_vs_prev": false,
+      "verdict": "PROGRESSING"
+    },
+    {
+      "window_index": 2,
+      "n_tokens": 633,
+      "complete": true,
+      "decode_error": null,
+      "n_frames": 8,
+      "mean_within_window_motion_m": 0.2585,
+      "cross_window_disp_m": 0.1505,
+      "frozen_vs_prev": false,
+      "verdict": "PROGRESSING"
+    },
+    {
+      "window_index": 3,
+      "n_tokens": 154,
+      "complete": false,
+      "decode_error": null,
+      "n_frames": 8,
+      "mean_within_window_motion_m": 0.0343,
+      "cross_window_disp_m": 0.346,
+      "frozen_vs_prev": false,
+      "verdict": "PROGRESSING"
+    }
+  ],
+  "overall": "PROGRESSING (at least one transition shows real change)",
+  "n_gt_blocks_available_for_reference": 2
+}

@@ -1,0 +1,37 @@
+`torch_dtype` is deprecated! Use `dtype` instead!
+Model:     /e/data1/datasets/playground/mmlaion/shared/nguyen38/output_vla/qwen3_1.7b_vla_v6_seq8192/hf/iter_0004033
+Tokenizer: /e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/tokenizer_vla_qwen3_v2
+
+Loading model on cuda (bf16)...
+Loaded: 1.97B params
+
+
+########## SEED 42 ##########
+======================================================================
+TEST: agent temporal continuity (sampled, T=0.8, top_p=0.9, rep_penalty=1.3)
+======================================================================
+  Prompt: real header + 1 real primed agent block (722 tokens)
+  Generating up to 3000 new tokens (sampled)...
+  Generated 2098 tokens, found 2 agent block(s) after the primed one.
+    {"window_index": 0, "n_tokens": 601, "complete": true, "decode_error": null, "n_frames": 8, "mean_within_window_motion_m": 0.1637, "cross_window_disp_m": 0.0684, "frozen_vs_prev": false, "verdict": "PROGRESSING"}
+    {"window_index": 1, "n_tokens": 601, "complete": true, "decode_error": null, "n_frames": 8, "mean_within_window_motion_m": 0.1947, "cross_window_disp_m": 0.0755, "frozen_vs_prev": false, "verdict": "PROGRESSING"}
+
+  OVERALL: PROGRESSING (at least one transition shows real change)
+
+======================================================================
+TEST: cosmos temporal continuity (sampled, T=0.8, top_p=0.9, rep_penalty=1.3)
+======================================================================
+  Prompt: real header + 1 real primed cosmos block (611 tokens)
+  Generating up to 4000 new tokens (sampled)...
+  Generated 4000 tokens, found 3 cosmos block(s) after the primed one.
+    {"chunk_index": 0, "n_ids": 200, "complete": true, "position_match_frac": 0.015, "seq_similarity": 0.005, "macro_repeat": false, "verdict": "PROGRESSING"}
+    {"chunk_index": 1, "n_ids": 200, "complete": true, "position_match_frac": 0.0, "seq_similarity": 0.0, "macro_repeat": false, "verdict": "PROGRESSING"}
+    {"chunk_index": 2, "n_ids": 137, "complete": false, "position_match_frac": 0.0, "seq_similarity": 0.0, "macro_repeat": false, "verdict": "PROGRESSING"}
+
+  OVERALL: PROGRESSING (at least one transition shows real change)
+
+======================================================================
+SUMMARY (all seeds)
+======================================================================
+  seed=42 agent: PROGRESSING (at least one transition shows real change)
+  seed=42 cosmos: PROGRESSING (at least one transition shows real change)

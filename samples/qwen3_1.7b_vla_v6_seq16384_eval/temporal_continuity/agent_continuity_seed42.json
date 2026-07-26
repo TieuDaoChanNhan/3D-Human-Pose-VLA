@@ -1,0 +1,13 @@
+{
+  "seed": 42,
+  "prompt_len_tokens": 722,
+  "primed_block": {
+    "source": "primed_real_block0",
+    "decode_error": null,
+    "n_tokens": 277
+  },
+  "n_new_blocks": 0,
+  "results": [],
+  "overall": "INSUFFICIENT (0 new blocks generated within token budget)",
+  "n_gt_blocks_available_for_reference": 2
+}

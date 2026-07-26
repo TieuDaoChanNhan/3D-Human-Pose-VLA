@@ -1,0 +1,46 @@
+`torch_dtype` is deprecated! Use `dtype` instead!
+/e/project1/reformo/nguyen38/env_stable_vla/lib/python3.12/site-packages/timm/models/layers/__init__.py:48: FutureWarning: Importing from timm.models.layers is deprecated, please import via timm.layers
+  warnings.warn(f"Importing from {__name__} is deprecated, please import via timm.layers", FutureWarning)
+/e/project1/reformo/nguyen38/env_stable_vla/lib/python3.12/site-packages/timm/models/registry.py:4: FutureWarning: Importing from timm.models.registry is deprecated, please import via timm.models
+  warnings.warn(f"Importing from {__name__} is deprecated, please import via timm.models", FutureWarning)
+/e/project1/reformo/nguyen38/env_stable_vla/lib/python3.12/site-packages/timm/models/helpers.py:7: FutureWarning: Importing from timm.models.helpers is deprecated, please import via timm.models
+  warnings.warn(f"Importing from {__name__} is deprecated, please import via timm.models", FutureWarning)
+Model:  /e/data1/datasets/playground/mmlaion/shared/nguyen38/output_vla/qwen3_1.7b_vla_v6_seq8192/hf/iter_0004033
+Prompt:
+### Title: Morning run in the park
+### Context: A person is running in a park.
+
+
+Loading model on cuda (bf16)...
+Saved full generated text -> /e/project1/reformo/nguyen38/3d-human-pose/samples/qwen3_1.7b_vla_v6_seq8192_eval/full_chain_simple/generated_full_text.txt
+
+Found 7 wrapped blocks: ['caption', 'seed2', 'listen', 'cosmos', 'agent', 'listen', 'cosmos']
+
+[caption] The person is riding on an orange and black slide.
+
+[seed2] 32 tokens -> decoding to image...
+Loading sd2-community/stable-diffusion-2-1-unclip (first run downloads ~5GB)...
+Loading pipeline components...:   0%|          | 0/9 [00:00<?, ?it/s]`torch_dtype` is deprecated! Use `dtype` instead!
+Loading pipeline components...:  44%|████▍     | 4/9 [00:00<00:00, 21.73it/s]Loading pipeline components...:  78%|███████▊  | 7/9 [00:00<00:00,  8.65it/s]Loading pipeline components...: 100%|██████████| 9/9 [00:00<00:00, 12.33it/s]
+BertLMHeadModel has generative capabilities, as `prepare_inputs_for_generation` is explicitly defined. However, it doesn't directly inherit from `GenerationMixin`. From 👉v4.50👈 onwards, `PreTrainedModel` will NOT inherit from `GenerationMixin`, and this model will lose the ability to call `generate` and other related functions.
+  - If you're using `trust_remote_code=True`, you can get rid of this warning by loading the model with an auto class. See https://huggingface.co/docs/transformers/en/model_doc/auto#auto-classes
+  - If you are the owner of the model architecture code, please modify your model class such that it inherits from `GenerationMixin` (after `PreTrainedModel`, otherwise you'll get an exception).
+  - If you are not the owner of the model architecture class, please contact the model code owner to update it.
+Loading Seed2Tokenizer...
+  0%|          | 0/21 [00:00<?, ?it/s]  5%|▍         | 1/21 [00:00<00:05,  3.78it/s] 14%|█▍        | 3/21 [00:00<00:02,  8.97it/s] 24%|██▍       | 5/21 [00:00<00:01, 12.01it/s] 33%|███▎      | 7/21 [00:00<00:01, 13.89it/s] 43%|████▎     | 9/21 [00:00<00:00, 15.10it/s] 52%|█████▏    | 11/21 [00:00<00:00, 15.90it/s] 62%|██████▏   | 13/21 [00:00<00:00, 16.51it/s] 71%|███████▏  | 15/21 [00:01<00:00, 16.86it/s] 81%|████████  | 17/21 [00:01<00:00, 17.11it/s] 90%|█████████ | 19/21 [00:01<00:00, 17.28it/s]100%|██████████| 21/21 [00:01<00:00, 17.39it/s]100%|██████████| 21/21 [00:01<00:00, 15.01it/s]
+/e/project1/reformo/nguyen38/env_stable_vla/lib/python3.12/site-packages/snac/snac.py:108: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  state_dict = torch.load(model_path, map_location="cpu")
+  Saved -> /e/project1/reformo/nguyen38/3d-human-pose/samples/qwen3_1.7b_vla_v6_seq8192_eval/full_chain_simple/seed2_image.png
+
+[listen] 9 snac tokens -> decoding to audio...
+  Saved -> /e/project1/reformo/nguyen38/3d-human-pose/samples/qwen3_1.7b_vla_v6_seq8192_eval/full_chain_simple/audio.wav
+
+[cosmos] 200 tokens found -> decoding to video (grid auto-detected: 200=old/w8, 896=new/w24)...
+  Saved -> /e/project1/reformo/nguyen38/3d-human-pose/samples/qwen3_1.7b_vla_v6_seq8192_eval/full_chain_simple/cosmos_chunk0.mp4
+
+[agent] decoding pose...
+  Decoded 1 window(s), shape [1, 8, 17, 3], range [-0.8235, 0.9333] m -> /e/project1/reformo/nguyen38/3d-human-pose/samples/qwen3_1.7b_vla_v6_seq8192_eval/full_chain_simple/agent_pose.json
+    window 0: r_wrist 0.548m, l_ankle 0.487m, r_elbow 0.454m
+  Saved skeleton snapshot -> /e/project1/reformo/nguyen38/3d-human-pose/samples/qwen3_1.7b_vla_v6_seq8192_eval/full_chain_simple/agent_pose_skeleton.png
+
+Done. Modalities decoded: {'caption': True, 'seed2': True, 'cosmos': True, 'agent': True, 'snac': True}
