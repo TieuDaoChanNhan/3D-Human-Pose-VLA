@@ -1,0 +1,52 @@
+=== 1. snapshot_download tools ===
+Fetching 30 files:   0%|          | 0/30 [00:00<?, ?it/s]Fetching 30 files:   3%|▎         | 1/30 [00:00<00:12,  2.38it/s]Fetching 30 files:  30%|███       | 9/30 [00:00<00:01, 12.95it/s]Fetching 30 files:  37%|███▋      | 11/30 [00:00<00:01, 14.02it/s]Fetching 30 files:  57%|█████▋    | 17/30 [00:01<00:00, 17.43it/s]Fetching 30 files:  80%|████████  | 24/30 [00:01<00:00, 23.99it/s]Fetching 30 files:  90%|█████████ | 27/30 [00:01<00:00, 19.27it/s]Fetching 30 files: 100%|██████████| 30/30 [00:01<00:00, 17.88it/s]
+/e/project1/reformo/nguyen38/env_stable_vla/lib/python3.12/site-packages/snac/snac.py:108: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  state_dict = torch.load(model_path, map_location="cpu")
+/e/project1/reformo/nguyen38/env_stable_vla/lib/python3.12/site-packages/timm/models/layers/__init__.py:48: FutureWarning: Importing from timm.models.layers is deprecated, please import via timm.layers
+  warnings.warn(f"Importing from {__name__} is deprecated, please import via timm.layers", FutureWarning)
+/e/project1/reformo/nguyen38/env_stable_vla/lib/python3.12/site-packages/timm/models/registry.py:4: FutureWarning: Importing from timm.models.registry is deprecated, please import via timm.models
+  warnings.warn(f"Importing from {__name__} is deprecated, please import via timm.models", FutureWarning)
+/e/project1/reformo/nguyen38/env_stable_vla/lib/python3.12/site-packages/timm/models/helpers.py:7: FutureWarning: Importing from timm.models.helpers is deprecated, please import via timm.models
+  warnings.warn(f"Importing from {__name__} is deprecated, please import via timm.models", FutureWarning)
+repo tools at: /e/project1/reformo/nguyen38/jupiter_cache/huggingface/hub/models--EmpathicRobotics--vla-1.7b-qwen3-v6/snapshots/524f3c2ff98baf961a7f939fc8e911855bf86d6b
+
+=== 2. vc.setup ===
+vla_core ready: /e/project1/reformo/nguyen38/jupiter_cache/huggingface/hub/models--EmpathicRobotics--vla-1.7b-qwen3-v6/snapshots/524f3c2ff98baf961a7f939fc8e911855bf86d6b
+
+=== 3. build_prompt (title+content -> separate header lines) ===
+'### Title: Boy studying at his desk\n### Context: A young boy is sitting at a desk, studying and writing in a notebook.\n'
+OK: two separate header lines
+
+=== 4. load_model (downloads the real 3.9GB v6 checkpoint) ===
+Loaded EmpathicRobotics/vla-1.7b-qwen3-v6 as torch.bfloat16 on cuda:0
+context length (model.config.max_position_embeddings): 8192
+
+=== 5. generate_once ===
+generated 8420 chars -> /tmp/claude-30562/-e-project1-reformo-nguyen38-3d-human-pose/aeb5872e-5946-4ba3-814f-2d3b43a71418/scratchpad/notebook_test/generated_full_text.txt
+
+=== 6. summarize + _have ===
+counts: {'seed2': 64, 'cosmos': 431, 'snac': 39, 'listen_snac': 39, 'speak_snac': 0, 'agent_tokens': 0, 'agent_coords': 0, 'caption_blocks': 1, 'speech_blocks': 1, 'listen_blocks': 4, 'speak_blocks': 0, 'agent_blocks': 0}
+have: {'pose': False, 'video': True, 'image': True, 'audio': True}
+
+=== 7. no agent tokens produced this run (skipping pose) ===
+
+=== 8. decode_cosmos (multi-chunk) ===
+2/2 chunks decoded (leftover=31) -> /tmp/claude-30562/-e-project1-reformo-nguyen38-3d-human-pose/aeb5872e-5946-4ba3-814f-2d3b43a71418/scratchpad/notebook_test/video.mp4
+
+=== 9. decode_speak / decode_snac (wrapper-aware) ===
+speak_snac ids: 0, listen_snac ids: 39
+decoded LISTEN format (39 ids) -> /tmp/claude-30562/-e-project1-reformo-nguyen38-3d-human-pose/aeb5872e-5946-4ba3-814f-2d3b43a71418/scratchpad/notebook_test/audio.wav
+
+=== 10. decode_seed2 (generative, ~7.6GB first-use download) ===
+Loading sd2-community/stable-diffusion-2-1-unclip (first run downloads ~5GB)...
+Loading pipeline components...:   0%|          | 0/9 [00:00<?, ?it/s]`torch_dtype` is deprecated! Use `dtype` instead!
+Loading pipeline components...:  22%|██▏       | 2/9 [00:00<00:00, 13.74it/s]Loading pipeline components...:  44%|████▍     | 4/9 [00:00<00:00, 14.93it/s]Loading pipeline components...: 100%|██████████| 9/9 [00:00<00:00, 14.48it/s]Loading pipeline components...: 100%|██████████| 9/9 [00:00<00:00, 14.47it/s]
+BertLMHeadModel has generative capabilities, as `prepare_inputs_for_generation` is explicitly defined. However, it doesn't directly inherit from `GenerationMixin`. From 👉v4.50👈 onwards, `PreTrainedModel` will NOT inherit from `GenerationMixin`, and this model will lose the ability to call `generate` and other related functions.
+  - If you're using `trust_remote_code=True`, you can get rid of this warning by loading the model with an auto class. See https://huggingface.co/docs/transformers/en/model_doc/auto#auto-classes
+  - If you are the owner of the model architecture code, please modify your model class such that it inherits from `GenerationMixin` (after `PreTrainedModel`, otherwise you'll get an exception).
+  - If you are not the owner of the model architecture class, please contact the model code owner to update it.
+Loading Seed2Tokenizer...
+  0%|          | 0/21 [00:00<?, ?it/s]  5%|▍         | 1/21 [00:00<00:02,  9.09it/s] 19%|█▉        | 4/21 [00:00<00:00, 20.76it/s] 33%|███▎      | 7/21 [00:00<00:00, 23.25it/s] 52%|█████▏    | 11/21 [00:00<00:00, 26.50it/s] 67%|██████▋   | 14/21 [00:00<00:00, 26.37it/s] 86%|████████▌ | 18/21 [00:00<00:00, 27.82it/s]100%|██████████| 21/21 [00:00<00:00, 26.33it/s]100%|██████████| 21/21 [00:00<00:00, 25.23it/s]
+-> /tmp/claude-30562/-e-project1-reformo-nguyen38-3d-human-pose/aeb5872e-5946-4ba3-814f-2d3b43a71418/scratchpad/notebook_test/image.png
+
+=== DONE ===
