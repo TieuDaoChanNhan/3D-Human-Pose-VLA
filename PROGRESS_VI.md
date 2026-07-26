@@ -3394,6 +3394,21 @@ Tìm thêm 2 record thật cho temporal-continuity (script cũ đã hỗ trợ s
 
 Gap "không theo đúng chủ đề prompt" (Huu chỉ ra từ v2, y nguyên qua v3→v4→v5) **vẫn y nguyên ở cả 3 bản v6** — đúng dự đoán 25/07, vì không version nào (kể cả v6) thêm data instruction/reasoning mới, chỉ đổi mix/kiến trúc pretrain.
 
+### 5. Chạy thêm full-chain simple-prompt cho v2 (test này v2 trước giờ chưa từng chạy) — so sánh ngang hàng thật với v6
+User hỏi trực tiếp "so sánh v6 với v2 xem". Cùng prompt/seed y hệt v6 (`### Title: Morning run in the park\n### Context: A person is running in a park.\n`, seed=7).
+
+**Bug môi trường gặp lại khi load tokenizer v2**: đúng `AttributeError` đã ghi nhận 25/07 (`extra_special_tokens` list cũ vs `transformers` hiện tại yêu cầu dict) — patch tạm 1 bản copy ở scratchpad (`extra_special_tokens: {}`), không đụng file gốc trên `/e/data1`.
+
+| | v2 | v6-seq4096 | v6-seq8192 | v6-seq16384 |
+|---|---|---|---|---|
+| Chuỗi modal | caption→seed2→snac→caption→seed2→cosmos→**agent**→snac→**agent**→snac (10 block, **mở agent 2 lần**) | caption→seed2→listen→cosmos→listen×3→seed2→cosmos→listen×3 (13 block, không agent) | caption→seed2→listen→cosmos→agent→listen→cosmos (đủ 5 loại) | caption→seed2→listen×3→caption (dừng sớm, thiếu cosmos/agent) |
+| Caption tự viết | "riding on an orange and black mountain bike" — sai chủ đề | "riding on top of an airplane" — sai | "riding on an orange and black slide" — sai | "riding on an inflatable raft down a street" — sai |
+| Decode được | **đủ cả 5 loại** (ảnh+video+audio+pose) | ảnh+audio+video (thiếu pose) | đủ cả 5 loại | chỉ ảnh+audio |
+
+**Phát hiện đáng chú ý**: v2 là bản DUY NHẤT mở `<agent>` **2 lần** trong 1 lần generate ở test full-chain này — củng cố thêm phát hiện từ temporal-continuity rằng v2 vẫn là baseline mạnh nhất về khả năng quay lại/duy trì agent, dù v6-seq4096 có chuỗi liên tiếp dài nhất (4 block, nhưng ở 1 test khác — temporal-continuity, không phải test full-chain novel-prompt này). 2/4 caption (v2 "mountain bike", seq8192 "slide") đều bịa thêm chi tiết "orange and black" dù không liên quan prompt — nghi là 1 cụm mô tả lặp lại nhiều trong data training khiến model "quen miệng" dùng lại, không hẳn nhiễu ngẫu nhiên thuần tuý.
+
+**Xác nhận lại bằng số liệu mới**: cả v2 lẫn cả 3 bản v6 đều sai hoàn toàn chủ đề caption ("running in the park") — gap instruction-following là vấn đề xuyên suốt MỌI version đã test (v2→v6), không phải thứ sửa được bằng seq_length/mix/window.
+
 ### Kết luận phiên này
 - **v6 (đặc biệt seq4096/seq8192) là bản tốt nhất kể từ v2** trên cả PPL lẫn khả năng duy trì modal theo thời gian — vượt hẳn v3/v4/v5. Xác nhận hướng "rebuild lại theo kiến trúc v2 + thêm data mới" đúng hơn hẳn so với tiếp tục chỉnh window/dropout trên nền v3.
 - **seq16384 yếu nhất trong 3 bản v6** trên mọi trục đo được (PPL 6.12 cao nhất, 0 block agent quay lại, full-chain thiếu cosmos/agent) — nghi do train ít iteration nhất (2016 vs 4033/8065 — cùng ~33.8B token nhưng seq dài hơn → ít iteration hơn ở cùng global batch size), chưa tách bạch được có phải do bản thân seq_length hay do số iteration.
