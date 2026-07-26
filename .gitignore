@@ -61,3 +61,7 @@ Miniforge3-Linux-aarch64.sh
 
 # Environment
 env_flatten/Miniforge3-Linux-x86_64.sh
+
+# Internal Vietnamese-language docs -- kept locally, not published to the public repo
+PROGRESS_VI.md
+PROJECT_OVERVIEW_VI.md
