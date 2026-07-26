@@ -1,10 +1,21 @@
-# FineVideo-VLA Dataset Pipeline
+# PAB-Spline VLA — Omni-Modal Dataset & Training Pipeline
+
+**Start here**: [`PROJECT_OVERVIEW_EN.md`](PROJECT_OVERVIEW_EN.md) is a structured (non-chronological) summary of the whole project — what it is, why it exists, the full data/architecture picture, training history, and roadmap. [`PROGRESS.md`](PROGRESS.md) is the raw session-by-session log if you need the blow-by-blow. This README covers the **video + 3D-pose pipeline specifically** (the code in this repository) — one of six data sources feeding the current training mix.
 
 **⚠️ If you're picking this up on JUWELS: see `TOKENIZE_TODO.md` first** — it lists exactly which
 datasets on `/p` still need (re-)tokenizing into Megatron `.bin/.idx` before the next training run,
 and which existing tokenized outputs are stale.
 
-**⚠️ Scope note (2026-07-20):** this repo's pipeline (below) covers the **video + 3D-pose branch** of a broader **omni-modal** project — not the whole scope anymore. Per Huu (project lead), the target model binds *any* modality pair (image, video, sound, action, IMU, ...), as long as the source is permissively licensed and the mix is balanced across modalities. Non-video/pose sources (e.g. `synth_llava` image+caption pairs, `laion/emotional-roleplay-finetuning-dataset` speech+text) are being folded in under `data_prep/`, tokenized via whichever existing modality (`seed2` for standalone images, `snac` for standalone audio) fits, rather than requiring every source to produce video+pose+agent tokens. See `../CLAUDE.md`'s Project Overview and `datasets.md` for the full picture; everything below describes this repo's original, still-primary video+pose branch.
+**⚠️ Scope note:** this repo's pipeline (below) covers the **video + 3D-pose branch** of a broader **omni-modal** project — not the whole scope. The target model binds *any* modality combination (image, video, sound, action, text), as long as each source is permissively licensed and the overall mix is balanced across modalities. Five other sources (`Harmony4D` pose, `OmniVideo-100K` video+QA, `MV-Omni` audio+image+text, `synth_llava` image+caption, `laion/emotional-roleplay` speech+text) are folded in under `data_prep/`, each tokenized via whichever existing modality tokenizer fits (`seed2` for standalone images, SNAC for standalone audio), rather than requiring every source to produce video+pose+agent tokens. See `PROJECT_OVERVIEW_EN.md` and `datasets.md` for the full picture; everything below describes this repo's own video+pose branch.
+
+## Current status (2026-07-26)
+
+| | Best result | Notes |
+|---|---|---|
+| Best public model | [`EmpathicRobotics/vla-1.7b-qwen3-v2`](https://huggingface.co/EmpathicRobotics/vla-1.7b-qwen3-v2) | window=8, PPL 5.77 — still unbeaten by any later training run (v3-v6 tried window=24 and other variants; see `PROGRESS.md`) |
+| Latest architecture | `v6` (3 seq_length variants, `w8_new` mix) | Rebuilds v2's window=8 recipe + 5 more data sources; PPL 5.98-6.36, closely tracking v2. Internal checkpoints only, not yet published as a model repo. |
+| Recommended tokenizer | [`EmpathicRobotics/tokenizer-vla-qwen3-v2`](https://huggingface.co/EmpathicRobotics/tokenizer-vla-qwen3-v2) | Qwen3-based, 274,561 vocab, includes `<listen>`/`<speak>` audio-role tokens |
+| Known open problem | Instruction-following | Every version tested (v2 through v6) fails to generate on-topic content for a genuinely novel text prompt — see `PROJECT_OVERVIEW_EN.md` §6/2.5(c) for the evidence and the proposed fix ("VLA-Instruct") |
 
 This repository contains the **complete pipeline** for building the FineVideo-VLA pretraining dataset from HuggingFace's [FineVideo](https://huggingface.co/datasets/HuggingFaceFV/finevideo) dataset (~40K YouTube videos). The output is a Megatron-LM-ready flat JSONL dataset.
 
@@ -29,18 +40,41 @@ Agent tokens are already self-describing (`<pelvis_x_128>` etc) and pass through
 
 ---
 
-## HuggingFace Datasets & Tokenizer
+## HuggingFace Datasets, Models & Tokenizers
+
+All resources are under the [`EmpathicRobotics`](https://huggingface.co/EmpathicRobotics) org.
+
+### This repo's own output (video + 3D-pose branch)
 
 | Resource | Description | Size |
 |----------|-------------|------|
-| [FineVideo-Prototype-Tokenized](https://huggingface.co/datasets/EmpathicRobotics/FineVideo-Prototype-Tokenized) | Base video tokens (Seed2/Cosmos/AVC-LM) from prototype pipeline | ~660 GB |
+| [FineVideo-Phase7-Flattened](https://huggingface.co/datasets/EmpathicRobotics/FineVideo-Phase7-Flattened) | **Current (v7)**: flat Megatron-LM JSONL, window=8, `<listen>`/`<speak>` audio wrapper — final training-ready output | 371,892 records, 10.93B tokens |
+| [FineVideo-Prototype-Tokenized](https://huggingface.co/datasets/EmpathicRobotics/FineVideo-Prototype-Tokenized) | Base video tokens (Seed2/Cosmos/AVC-LM) from the prototype pipeline | ~660 GB |
 | [FineVideo-Phase2-3DPose](https://huggingface.co/datasets/EmpathicRobotics/FineVideo-Phase2-3DPose) | 3D pose NPY from MotionBERT (after Phase 2) | ~259 GB |
 | [FineVideo-Phase4-YOLOPose](https://huggingface.co/datasets/EmpathicRobotics/FineVideo-Phase4-YOLOPose) | YOLO-cleaned 3D poses (raw floats, after Phase 3+4) | ~107 GB |
 | [FineVideo-Phase5-AgentTokens](https://huggingface.co/datasets/EmpathicRobotics/FineVideo-Phase5-AgentTokens) | Full hierarchical merged dataset with agent tokens (after Phase 5+6) | ~657 GB |
-| [FineVideo-Phase7-Flattened](https://huggingface.co/datasets/EmpathicRobotics/FineVideo-Phase7-Flattened) | Flat Megatron-LM JSONL (final output, ready for pretraining) | ~19 GB |
-| [tokenizer-vla-adaptive](https://huggingface.co/EmpathicRobotics/tokenizer-vla-adaptive) | HuggingFace tokenizer (GPT-NeoX-20b + 93,938 VLA tokens, 144,215 total) | — |
 
-All datasets under `EmpathicRobotics/`, split 152 train / 8 test shards (95/5, seed 42), gzip compressed.
+### Other data sources in the current training mix (built under `data_prep/`, see `PROJECT_OVERVIEW_EN.md` §2.3)
+
+| Resource | Modality | Size |
+|----------|----------|------|
+| [MV-Omni](https://huggingface.co/datasets/EmpathicRobotics/MV-Omni) | audio + image + text (largest single source in the mix) | 1,593,301 records, ~20.4B tokens |
+| [harmony4d-flattened](https://huggingface.co/datasets/EmpathicRobotics/harmony4d-flattened) | pose only (close two-person interaction, 20x oversampled) | 8,320 records, ~0.32B tokens |
+| [omnivideo-100k-final](https://huggingface.co/datasets/EmpathicRobotics/omnivideo-100k-final) | video + pose (subset) + audio + QA | 5,214 records, ~1.98B tokens |
+| [synth-llava](https://huggingface.co/datasets/EmpathicRobotics/synth-llava) | still image + caption | 603,999 records, ~0.1B tokens |
+| [emotional-roleplay-finetuning-dataset-flattened](https://huggingface.co/datasets/EmpathicRobotics/emotional-roleplay-finetuning-dataset-flattened) | synthetic speech + text | 67,459 records, ~0.11B tokens |
+
+### Models & tokenizers
+
+| Resource | Description |
+|----------|-------------|
+| [vla-1.7b-qwen3-v2](https://huggingface.co/EmpathicRobotics/vla-1.7b-qwen3-v2) | **Best public model to date** (PPL 5.77), bundled with runnable encode/decode scripts for all 4 modalities |
+| [tokenizer-vla-qwen3-v2](https://huggingface.co/EmpathicRobotics/tokenizer-vla-qwen3-v2) | **Current recommendation** — Qwen3-based, 274,561 vocab, includes `<listen>`/`<speak>` |
+| [tokenizer-vla-qwen3](https://huggingface.co/EmpathicRobotics/tokenizer-vla-qwen3) | Earlier Qwen3-based tokenizer, used by v2 (no `<listen>`/`<speak>`) |
+| [vla-1.7b-pab-spline-adaptive](https://huggingface.co/EmpathicRobotics/vla-1.7b-pab-spline-adaptive), [vla-1.7b-pab-spline-25b-test](https://huggingface.co/EmpathicRobotics/vla-1.7b-pab-spline-25b-test) | First-generation models (GPT-NeoX backbone, superseded) |
+| [tokenizer-vla-adaptive](https://huggingface.co/EmpathicRobotics/tokenizer-vla-adaptive) | Original GPT-NeoX-20b + 93,938 VLA tokens (144,215 total) — superseded by the Qwen3-based tokenizers above |
+
+Datasets are split into train/test shards (typically 95/5, seed 42), gzip compressed.
 
 ---
 
@@ -119,10 +153,17 @@ All datasets under `EmpathicRobotics/`, split 152 train / 8 test shards (95/5, s
 
 ## End-to-End Pipeline
 
-**Note (2026-07-25): this diagram describes the original window=8 pipeline
-(8-frame Cosmos chunks). The current/live pipeline uses window=24 — see
-`window24_current/` under `$DATA` and CLAUDE.md. Data below moved to
-`$DATA/window8_legacy/` during the 2026-07-25 data1 reorg.**
+**Note (2026-07-26): window=8 (8-frame Cosmos chunks, as diagrammed below) is
+the current standard again.** The project tried window=24 (`window24_current/`
+under `$DATA`) for several training rounds (v3-v5); it consistently
+underperformed the original window=8 architecture on every metric measured,
+so the current mix (`w8_new/` under `$DATA`, used to train `v6`) rebuilt
+window=8 rather than continuing to iterate on window=24. The pipeline steps
+and paths below still describe the original window=8 run
+(now under `$DATA/window8_legacy/`) — the mechanics are unchanged, only the
+data location moved. See `PROJECT_OVERVIEW_EN.md` §2.4/§2.8 for the full
+training history and `PROGRESS.md`'s 2026-07-26 entry for exactly which
+outputs live under `w8_new/` vs `window8_legacy/` vs `window24_current/`.
 
 ```
 $DATA = /e/data1/datasets/playground/mmlaion/shared/nguyen38
@@ -301,7 +342,7 @@ Environment YAML specs are in `envs/`.
 
 ## Key Data Paths
 
-All data lives under `$DATA = /e/data1/datasets/playground/mmlaion/shared/nguyen38`.
+All data lives under `$DATA = /e/data1/datasets/playground/mmlaion/shared/nguyen38`. Three sibling top-level directories coexist by design (never delete an older one — see `PROGRESS.md`'s "never delete dataset versions" rule): `window8_legacy/` (this repo's original run, paths below), `window24_current/` (the window=24 experiments, no longer the recommended architecture despite the name), and `w8_new/` (the current `v6`-training mix — window=8 rebuild of this repo's pipeline plus the 5 other data sources, see `PROJECT_OVERVIEW_EN.md` §2.3 for its own path table).
 
 | What | Path |
 |------|------|
@@ -317,6 +358,8 @@ All data lives under `$DATA = /e/data1/datasets/playground/mmlaion/shared/nguyen
 ---
 
 ## Vocabulary & Tokenizer
+
+**Current recommendation: [`EmpathicRobotics/tokenizer-vla-qwen3-v2`](https://huggingface.co/EmpathicRobotics/tokenizer-vla-qwen3-v2)** (Qwen3-based, 274,561 real vocab / 274,688 padded) — used to train `v2` and `v6`, includes `<listen>`/`<speak>` audio-role tokens atomically in addition to everything below. The description that follows documents the original GPT-NeoX-20b-based vocab expansion (`tools/tokenizer/expand_vocab.py`), which is still accurate for the *token families* (seed2/cosmos/agent/fps/joint tokens are unchanged in the Qwen3-based tokenizers, just re-registered on a different base vocabulary) but superseded as the tokenizer to actually use for new training runs.
 
 `tools/tokenizer/expand_vocab.py` extends the GPT-NeoX-20b base (`vocab/gpt-neox-20b-vocab.json`) with:
 
