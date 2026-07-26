@@ -6,7 +6,15 @@ Upload flattened Megatron-LM shards to EmpathicRobotics/FineVideo-Phase7-Flatten
   - gzip compressed in parallel
   - uploaded via huggingface_hub
 
-v6 (default): seed2 + cosmos(50%) + agent + snac + caption + speech, 371,892 records, 5.443B tokens
+v7 (default, 2026-07-26): seed2 + cosmos(50%) + agent + listen + caption + speech, 371,892 records,
+  10,926,767,551 real tokens (from the Megatron .idx used to train v6, the training run).
+  Re-tokenized audio wrapper <snac>...</snac> (v6) -> <listen>...</listen> (v7), matching the
+  w8_new mix -- record count/content otherwise unchanged from v6. Requires
+  EmpathicRobotics/tokenizer-vla-qwen3-v2, NOT tokenizer-vla-adaptive-v2 (which only has bare
+  <snac>, not atomic <listen>).
+  source: w8_new/flatten/finevideo_v6_listen/finevideo_v6_flat_listen/flat_final_vla_adaptive_rank_*.jsonl
+
+v6 (previous): seed2 + cosmos(50%) + agent + snac + caption + speech, 371,892 records, 5.443B tokens
   Rebuilt on top of the fps-mismatch fix in Phase 3/4 (affected ~35% of videos with
   native fps != 30 -- agent/pose windows are now correctly time-aligned) and adds
   explicit modality wrapper tokens (<seed2>...</seed2>, <cosmos>...</cosmos>,
@@ -17,12 +25,11 @@ v6 (default): seed2 + cosmos(50%) + agent + snac + caption + speech, 371,892 rec
   source: megatron_dataset_v6/flat_final_vla_adaptive_rank_*.jsonl (all on /e -- /p (JUWELS)
   is not mounted on JUPITER compute nodes)
 
-v5 (previous): seed2 + cosmos(50%) + agent + snac + caption + speech, 371,888 records, 5.256B tokens
-  source: megatron_dataset_v5/flat_final_vla_adaptive_rank_*.jsonl
-
 Usage:
     export HF_TOKEN='hf_...'
-    python tools/upload/upload_flattened_hf.py
+    python tools/upload/upload_flattened_hf.py \
+        --source-dir /e/data1/datasets/playground/mmlaion/shared/nguyen38/w8_new/flatten/finevideo_v6_listen/finevideo_v6_flat_listen \
+        --upload-dir /e/data1/datasets/playground/mmlaion/shared/nguyen38/w8_new/finevideo_v6_listen_hf_upload
     python tools/upload/upload_flattened_hf.py --skip-compress   # reuse existing .gz files
     python tools/upload/upload_flattened_hf.py --skip-upload     # compress only, no push
 """
@@ -160,7 +167,7 @@ def main():
             path_in_repo="README.md",
             repo_id=REPO_ID,
             repo_type="dataset",
-            commit_message="Update dataset card for v6: fps-mismatch fix + modality wrapper tokens, 5.443B tokens",
+            commit_message="Update dataset card for v7: <snac> -> <listen> wrapper, tokenizer-vla-qwen3-v2, 10.93B tokens",
         )
         print("Uploaded dataset card.")
 
@@ -168,7 +175,7 @@ def main():
         folder_path=args.upload_dir,
         repo_id=REPO_ID,
         repo_type="dataset",
-        commit_message="Upload v6: agent tokens rebuilt on fps-mismatch-fixed Phase 3/4, added seed2/cosmos/agent/snac wrapper tokens, 371,892 records, 5.443B tokens",
+        commit_message="Upload v7: re-tokenized audio wrapper <snac> -> <listen>, matching the w8_new mix (371,892 records, 10.93B real tokens)",
     )
 
     print(f"Done! https://huggingface.co/datasets/{REPO_ID}")

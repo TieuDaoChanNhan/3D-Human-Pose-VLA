@@ -2,10 +2,18 @@
 """
 Upload the finalized OmniVideo-100K dataset to HF.
 
-Window=24 pipeline (Step A, Phase 3/4/5, Phase 6/7, SNAC) re-run end to end
-and verified 2026-07-23: 5,213/5,213 rows, 0 malformed at every stage. All
-counts in this docstring/dataset card are from the real final_w24 output
-(recomputed directly, not carried over from the old window=8 run).
+2026-07-26 update: switched to the **window=8** pipeline (final_w8), matching
+the w8_new mix used to train v6 -- v2 (window=8) beat every window=24
+successor on every metric measured (PPL, modality persistence, see
+PROGRESS_VI.md 25-26/07/2026), so all sources feeding the current training
+mix were re-run at window=8 rather than kept at window=24. Verified
+2026-07-26: 5,214/5,214 rows (1 more than the w24 run's 5,213 -- not yet
+root-caused, likely just a per-run Step A survival difference; not
+investigated further since it's a single row out of 5,214), 0 malformed.
+All counts in this docstring/dataset card are from the real final_w8 output.
+
+Previous version (window=24, still describing the same source/pipeline
+otherwise) re-run end to end and verified 2026-07-23: 5,213/5,213 rows.
 
 Each row: {"video_id": ..., "text": <flattened training record>}
   <seed2_N>... <cosmos_N>... [<agent> <fps_30> <pelvis>...</agent>]...
@@ -25,11 +33,11 @@ import shutil
 
 from huggingface_hub import HfApi, login
 
-SOURCE_DIR = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/omnivideo_100k/final_w24"
-UPLOAD_DIR = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/window24_current/omnivideo_100k/final_w24_hf_upload"
+SOURCE_DIR = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/w8_new/omnivideo_100k/final_w8"
+UPLOAD_DIR = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/w8_new/omnivideo_100k/final_w8_hf_upload"
 SHARD_PREFIX = "step_a_rank"
-TOTAL_SHARDS = 32
-TEST_RATIO = 0.06  # ~2/32 shards held out
+TOTAL_SHARDS = 160
+TEST_RATIO = 0.06  # ~10/160 shards held out
 SEED = 42
 
 DATASET_CARD = """---
@@ -42,26 +50,31 @@ Finalized [MiG-NJU/OmniVideo-100K](https://huggingface.co/datasets/MiG-NJU/OmniV
 for the PAB-Spline / omni-modal VLA project: video tokens + pose agent tokens
 + QA, merged into one record per video.
 
-- **5,213 rows** (one per source video that survived Step A; 1 additional
-  video_id has QA in the source but no Step A output and is dropped --
-  `o883LVfQjHE`, logged as a warning by `phase7_finalize_omnivideo.py`, not a
-  bug)
-- **784 rows (~15%) have `<agent>` blocks** (3D pose, adaptive-PCHIP
-  17-joint xyz, 23,213 windows total) -- pose pipeline only ran on a
-  sports-subset of 1,126 videos; the rest are video+QA(+audio) only, no pose
-  (same partial-coverage pattern as the FineVideo-VLA flagship dataset)
-- **all 5,213 rows have `<listen>` blocks** (SNAC listen-format ambient
-  audio, 673,940 chunks total) -- unlike agent, SNAC covers every video
-- all 5,213 rows have QA appended (99,983 QA pairs total: 70,017 open-ended +
+**2026-07-26: re-run at window=8** (was window=24) to match the w8_new
+mix used to train v6 -- see version note above.
+
+- **5,214 rows** (one per source video that survived Step A)
+- **799 rows (~15.3%) have `<agent>` blocks** (3D pose, adaptive-PCHIP
+  17-joint xyz) -- pose pipeline only ran on a sports-subset of the videos;
+  the rest are video+QA(+audio) only, no pose (same partial-coverage
+  pattern as the FineVideo-VLA flagship dataset, and essentially the same
+  ~15% coverage ratio as the previous window=24 run)
+- **all 5,214 rows have `<listen>` blocks** (SNAC listen-format ambient
+  audio) -- unlike agent, SNAC covers every video
+- all 5,214 rows have QA appended (99,983 QA pairs total: 70,017 open-ended +
   29,966 multiple-choice, from the source `train_oe_70k.jsonl`/
-  `train_mcq_30k.jsonl`)
-- token totals (real, counted from final_w24): 17,225,728 `<seed2_N>` +
-  300,790,624 `<cosmos_N>` + ~7,379,928 agent joint tokens + 18,839,901
-  `<snac_N>`
+  `train_mcq_30k.jsonl` -- QA count is window-size-independent)
+- **real tokenized total (from the Megatron `.idx` used to train v6):
+  1,979,126,756 tokens** -- per-modality subtotals not recomputed for this
+  window=8 run (the w24 numbers below are historical, kept for reference,
+  not re-verified at w8): w24 had 17,225,728 `<seed2_N>` + 300,790,624
+  `<cosmos_N>` + ~7,379,928 agent joint tokens + 18,839,901 `<snac_N>` at
+  ~344M total -- window=8 has ~3x more chunks/video so is not directly
+  comparable modality-by-modality without a fresh count.
 
 ## Format
 
-Each row is `{{"video_id": ..., "text": ...}}` with `text`, per 24-frame/30fps
+Each row is `{{"video_id": ..., "text": ...}}` with `text`, per 8-frame/30fps
 chunk in order:
 
 ```
@@ -91,8 +104,8 @@ same convention as FineVideo's `pipeline_pose/phase7_flatten.py`.
 1. `step_a/step_a_tokenize_video.py` -- video -> raw seed2/cosmos/avc_lm (+ scripts.jsonl caption/speech anchors)
 2. `step_a/flatten_step_a_video.py` -- intermediate flatten (not the final artifact, kept for reference)
 3. `pose/phase1..4_*_omnivideo.py` + shared `pipeline_pose/phase5_adaptive_pchip.py` -- 3D pose -> agent tokens (sports subset only)
-4. `snac_omnivideo.py` -- SNAC listen-format audio tokenization, chunk-aligned (n_chunks recomputed from `omnivideo_100k_segment_captions.jsonl`'s `duration`, same formula as Step A -- see its own docstring). Wired into `phase6_merge_omnivideo.py` 2026-07-23 -- covers all 5,213 rows.
-5. `phase6_merge_omnivideo.py` -- inject `<agent>` into the Step A stream, chunk-aligned (window_id == chunk_idx * 24, verified exact match, no time interpolation needed)
+4. `snac_omnivideo.py` -- SNAC listen-format audio tokenization, chunk-aligned (n_chunks recomputed from `omnivideo_100k_segment_captions.jsonl`'s `duration`, same formula as Step A -- see its own docstring). Wired into `phase6_merge_omnivideo.py` -- covers all rows.
+5. `phase6_merge_omnivideo.py` -- inject `<agent>` into the Step A stream, chunk-aligned (window_id == chunk_idx * 8 for this window=8 run, verified exact match, no time interpolation needed)
 6. `phase7_finalize_omnivideo.py` -- append QA (grouped by video_id) after the video token stream -- **this repo's content**
 
 ## Split
@@ -180,8 +193,8 @@ def main():
         folder_path=args.upload_dir,
         repo_id=args.repo_id,
         repo_type="dataset",
-        commit_message="Upload finalized OmniVideo-100K, window=24 (5,213 rows, 784 with agent tokens, "
-                        "5,213 with listen/SNAC tokens, 5,213 with QA)",
+        commit_message="Upload finalized OmniVideo-100K, window=8 (5,214 rows, 799 with agent tokens, "
+                        "5,214 with listen/SNAC tokens, 5,214 with QA)",
         allow_patterns=["train/*.jsonl.gz", "test/*.jsonl.gz", "README.md"],
     )
 

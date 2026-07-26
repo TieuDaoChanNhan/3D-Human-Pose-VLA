@@ -2,11 +2,23 @@
 """
 Upload the flattened Harmony4D agent-token dataset to HF.
 
+2026-07-26 update: re-windowed at **window=8** (was window=24), matching the
+w8_new mix used to train v6 -- see `data_prep/harmony4d/phase3_normalize.py`'s
+--window-size/--stride flags and `flatten_harmony4d.py`'s --input-dir/
+--output-path flags, both added 2026-07-25/26 specifically so window=24 and
+window=8 outputs can coexist (never overwrite, see
+feedback_never_delete_dataset_versions memory). Oversample factor unchanged
+at 20x (the compounding-with-Megatron issue found 2026-07-26 was fixed via
+a config weight change, not by reducing this file's own oversample -- see
+project_harmony4d_oversampling memory).
+
 Source: single file at
-  /e/data1/datasets/playground/mmlaion/shared/nguyen38/outputs/harmony4d_flat.jsonl
-  (8,320 rows = 416 tracks x 20x oversample, ~5,344 whitespace-split tokens/row.
-  See project_harmony4d_oversampling memory + PROGRESS_VI.md 2026-07-23 for the
-  full pipeline: normalize-only Phase 3 (no monocular filters -- ground-truth
+  /e/data1/datasets/playground/mmlaion/shared/nguyen38/w8_new/harmony4d/harmony4d_flat_w8.jsonl
+  (8,320 rows = 416 tracks x 20x oversample, unchanged from the window=24 run --
+  ~15,254 whitespace-split tokens/row, ~2.85x the window=24 run's ~5,344/row,
+  consistent with window=8 producing ~3x more windows/track than window=24.
+  See project_harmony4d_oversampling memory + PROGRESS_VI.md 2026-07-23/26 for
+  the full pipeline: normalize-only Phase 3 (no monocular filters -- ground-truth
   multi-camera data, 416/416 tracks pass clean, vs FineVideo's 44%), Phase 5
   adaptive-PCHIP tokenize, Qwen2.5-VL caption + category text, 20x oversample.)
 
@@ -34,8 +46,8 @@ import random
 
 from huggingface_hub import HfApi, login
 
-SOURCE_FILE = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/outputs/harmony4d_flat.jsonl"
-UPLOAD_DIR = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/outputs/harmony4d_flat_hf_upload"
+SOURCE_FILE = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/w8_new/harmony4d/harmony4d_flat_w8.jsonl"
+UPLOAD_DIR = "/e/data1/datasets/playground/mmlaion/shared/nguyen38/w8_new/harmony4d/harmony4d_flat_w8_hf_upload"
 NUM_SHARDS = 8
 TEST_RATIO = 0.06  # ~1/16 tracks held out (split by base track, not by oversampled row -- see note below)
 SEED = 42
@@ -45,6 +57,13 @@ license: cc-by-4.0
 ---
 
 # {repo_name}
+
+**2026-07-26 update: re-windowed at window=8** (was window=24), to match
+`w8_new` -- the mix used to train v6 after v2 (also window=8) beat every
+window=24 successor on every metric measured. Same 416 tracks, same 20x
+oversample, same category+VLM-caption instruction text -- only the pose
+windowing granularity changed (24-frame windows -> 8-frame windows, so ~3x
+more windows/track are now concatenated per row).
 
 Flattened agent-token (3D pose) dataset from [Harmony4D](https://jyuntins.github.io/harmony4d/)
 (multi-person, multi-camera close-interaction motion capture -- hugging,
@@ -184,7 +203,7 @@ def main():
         folder_path=args.upload_dir,
         repo_id=args.repo_id,
         repo_type="dataset",
-        commit_message="Upload Harmony4D flattened agent-token dataset (8,320 rows, 416 tracks x 20x oversample)",
+        commit_message="Upload Harmony4D flattened agent-token dataset, window=8 (8,320 rows, 416 tracks x 20x oversample)",
         allow_patterns=["train/*.jsonl.gz", "test/*.jsonl.gz", "README.md"],
     )
 
