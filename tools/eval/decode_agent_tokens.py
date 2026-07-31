@@ -91,11 +91,18 @@ def parse_window(tokens: list[str]) -> dict:
         while i < len(tokens) and tokens[i] != close:
             tm = re.match(rf"<{name}_t_(\d+)>$", tokens[i])
             if tm and i + 3 < len(tokens):
-                t_indices.append(int(tm.group(1)))
                 xm = re.match(rf"<{name}_x_(\d+)>$", tokens[i + 1])
                 ym = re.match(rf"<{name}_y_(\d+)>$", tokens[i + 2])
                 zm = re.match(rf"<{name}_z_(\d+)>$", tokens[i + 3])
                 if xm and ym and zm:
+                    # t_indices/coords must grow together -- appending t before
+                    # validating x/y/z (as this used to do) desyncs the two
+                    # lists by 1 whenever the model emits a malformed quad
+                    # (e.g. a token from a different joint/axis in this slot),
+                    # which crashes PchipInterpolator downstream with a
+                    # length(x) != length(y) error instead of just skipping
+                    # the bad control point.
+                    t_indices.append(int(tm.group(1)))
                     coords.append([
                         dequantize(int(xm.group(1))),
                         dequantize(int(ym.group(1))),
